@@ -5,7 +5,7 @@
 -(BOOL)inputText:(NSString *)string client:(id)sender
 {
     //if contains whitespaces
-    if ([string rangeOfString:@":"].location != NSNotFound)
+    if ([string containsString:@":"])
     {
         _starting = !_starting;
         if (!_starting) return [self convert:string client:sender];

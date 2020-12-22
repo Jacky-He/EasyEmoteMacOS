@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		8AB8BBC625915575008FA061 /* apple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 8AB8BBC525915575008FA061 /* apple.tiff */; };
 		8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB8BBCA2591563B008FA061 /* EmoteInputController.m */; };
+		8AF18D6F259196FE0071A8A7 /* emojiStore.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8AF18D6E259196FE0071A8A7 /* emojiStore.txt */; };
+		8AF18D772591990C0071A8A7 /* Trie.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF18D762591990C0071A8A7 /* Trie.m */; };
+		8AF18D7B259199480071A8A7 /* TrieNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF18D7A259199480071A8A7 /* TrieNode.m */; };
+		8AF18D8225926D280071A8A7 /* Pair.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF18D8125926D280071A8A7 /* Pair.m */; };
+		8AF18D8625927C390071A8A7 /* DDFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF18D8525927C390071A8A7 /* DDFileReader.m */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		E93074B70A5C264700470842 /* InputMethodKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E93074B60A5C264700470842 /* InputMethodKit.framework */; };
@@ -23,6 +28,15 @@
 		8AB8BBC525915575008FA061 /* apple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = apple.tiff; sourceTree = "<group>"; };
 		8AB8BBC925915633008FA061 /* EmoteInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmoteInputController.h; sourceTree = "<group>"; };
 		8AB8BBCA2591563B008FA061 /* EmoteInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmoteInputController.m; sourceTree = "<group>"; };
+		8AF18D6E259196FE0071A8A7 /* emojiStore.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emojiStore.txt; sourceTree = "<group>"; };
+		8AF18D75259199020071A8A7 /* Trie.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Trie.h; sourceTree = "<group>"; };
+		8AF18D762591990C0071A8A7 /* Trie.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Trie.m; sourceTree = "<group>"; };
+		8AF18D7A259199480071A8A7 /* TrieNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrieNode.m; sourceTree = "<group>"; };
+		8AF18D7D259199500071A8A7 /* TrieNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrieNode.h; sourceTree = "<group>"; };
+		8AF18D8025926D200071A8A7 /* Pair.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pair.h; sourceTree = "<group>"; };
+		8AF18D8125926D280071A8A7 /* Pair.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Pair.m; sourceTree = "<group>"; };
+		8AF18D8525927C390071A8A7 /* DDFileReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DDFileReader.m; sourceTree = "<group>"; };
+		8AF18D8825927C440071A8A7 /* DDFileReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDFileReader.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* EasyEmote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyEmote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E93074B60A5C264700470842 /* InputMethodKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InputMethodKit.framework; path = /System/Library/Frameworks/InputMethodKit.framework; sourceTree = "<absolute>"; };
@@ -79,6 +93,7 @@
 		29B97314FDCFA39411CA2CEA /* NumberInput */ = {
 			isa = PBXGroup;
 			children = (
+				8AF18D6D259196E90071A8A7 /* Data */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -113,6 +128,22 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8AF18D6D259196E90071A8A7 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				8AF18D6E259196FE0071A8A7 /* emojiStore.txt */,
+				8AF18D8025926D200071A8A7 /* Pair.h */,
+				8AF18D8125926D280071A8A7 /* Pair.m */,
+				8AF18D7A259199480071A8A7 /* TrieNode.m */,
+				8AF18D7D259199500071A8A7 /* TrieNode.h */,
+				8AF18D75259199020071A8A7 /* Trie.h */,
+				8AF18D8525927C390071A8A7 /* DDFileReader.m */,
+				8AF18D8825927C440071A8A7 /* DDFileReader.h */,
+				8AF18D762591990C0071A8A7 /* Trie.m */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 		E93396E20A9A0AAD0073E6C4 /* images */ = {
@@ -150,6 +181,11 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				TargetAttributes = {
+					8D1107260486CEB800E47090 = {
+						LastSwiftMigration = 1230;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "EasyEmote" */;
 			compatibilityVersion = "Xcode 2.4";
@@ -175,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AB8BBC625915575008FA061 /* apple.tiff in Resources */,
+				8AF18D6F259196FE0071A8A7 /* emojiStore.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,7 +222,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AF18D8225926D280071A8A7 /* Pair.m in Sources */,
+				8AF18D7B259199480071A8A7 /* TrieNode.m in Sources */,
+				8AF18D772591990C0071A8A7 /* Trie.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				8AF18D8625927C390071A8A7 /* DDFileReader.m in Sources */,
 				8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -197,6 +238,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -207,11 +249,15 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(LOCAL_LIBRARY_DIR)/Input Methods/\"";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.apple.inputmethod.EasyEmote;
 				PRODUCT_NAME = EasyEmote;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Data/EasyEmote-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				SYMROOT = /Users/jackyhe/Desktop;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -222,6 +268,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N8Z8T3YH7D;
@@ -229,11 +276,14 @@
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.apple.inputmethod.EasyEmote;
 				PRODUCT_NAME = EasyEmote;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Data/EasyEmote-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				SYMROOT = /Users/jackyhe/Desktop;
 				WRAPPER_EXTENSION = app;
 			};

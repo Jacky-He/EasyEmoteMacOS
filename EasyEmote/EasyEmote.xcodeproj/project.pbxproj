@@ -12,13 +12,6 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		E93074B70A5C264700470842 /* InputMethodKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E93074B60A5C264700470842 /* InputMethodKit.framework */; };
-		E93396E90A9A0AD60073E6C4 /* nine.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E93396E50A9A0AD50073E6C4 /* nine.tiff */; };
-		E9C425850BFA0FC90065E4C6 /* currency.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E9C425830BFA0FC90065E4C6 /* currency.tiff */; };
-		E9C425860BFA0FC90065E4C6 /* Decimal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E9C425840BFA0FC90065E4C6 /* Decimal.tiff */; };
-		E9C4258A0BFA0FD60065E4C6 /* nostyle.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E9C425890BFA0FD60065E4C6 /* nostyle.tiff */; };
-		E9C4258E0BFA0FE70065E4C6 /* percent.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E9C4258D0BFA0FE70065E4C6 /* percent.tiff */; };
-		E9C425930BFA10060065E4C6 /* scientific.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E9C425910BFA10060065E4C6 /* scientific.tiff */; };
-		E9C425940BFA10060065E4C6 /* spellout.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E9C425920BFA10060065E4C6 /* spellout.tiff */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,13 +26,6 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* EasyEmote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyEmote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E93074B60A5C264700470842 /* InputMethodKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InputMethodKit.framework; path = /System/Library/Frameworks/InputMethodKit.framework; sourceTree = "<absolute>"; };
-		E93396E50A9A0AD50073E6C4 /* nine.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = nine.tiff; sourceTree = "<group>"; };
-		E9C425830BFA0FC90065E4C6 /* currency.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = currency.tiff; sourceTree = "<group>"; };
-		E9C425840BFA0FC90065E4C6 /* Decimal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Decimal.tiff; sourceTree = "<group>"; };
-		E9C425890BFA0FD60065E4C6 /* nostyle.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = nostyle.tiff; sourceTree = "<group>"; };
-		E9C4258D0BFA0FE70065E4C6 /* percent.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = percent.tiff; sourceTree = "<group>"; };
-		E9C425910BFA10060065E4C6 /* scientific.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = scientific.tiff; sourceTree = "<group>"; };
-		E9C425920BFA10060065E4C6 /* spellout.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = spellout.tiff; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,13 +119,6 @@
 			isa = PBXGroup;
 			children = (
 				8AB8BBC525915575008FA061 /* apple.tiff */,
-				E9C425910BFA10060065E4C6 /* scientific.tiff */,
-				E9C4258D0BFA0FE70065E4C6 /* percent.tiff */,
-				E9C425920BFA10060065E4C6 /* spellout.tiff */,
-				E9C425890BFA0FD60065E4C6 /* nostyle.tiff */,
-				E9C425830BFA0FC90065E4C6 /* currency.tiff */,
-				E9C425840BFA0FC90065E4C6 /* Decimal.tiff */,
-				E93396E50A9A0AD50073E6C4 /* nine.tiff */,
 			);
 			name = images;
 			sourceTree = "<group>";
@@ -195,14 +174,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E93396E90A9A0AD60073E6C4 /* nine.tiff in Resources */,
-				E9C425850BFA0FC90065E4C6 /* currency.tiff in Resources */,
 				8AB8BBC625915575008FA061 /* apple.tiff in Resources */,
-				E9C425860BFA0FC90065E4C6 /* Decimal.tiff in Resources */,
-				E9C4258A0BFA0FD60065E4C6 /* nostyle.tiff in Resources */,
-				E9C4258E0BFA0FE70065E4C6 /* percent.tiff in Resources */,
-				E9C425930BFA10060065E4C6 /* scientific.tiff in Resources */,
-				E9C425940BFA10060065E4C6 /* spellout.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

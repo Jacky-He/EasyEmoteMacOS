@@ -51,8 +51,8 @@ int main(int argc, char * argv[])
     NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
         
     server = [[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier];
-    candidates = [[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel];
-        
+    candidates = [[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain];
+   
     //load emojis
     dict = [[Trie alloc] init];
     NSURL* url = [[NSBundle mainBundle] URLForResource:@"emojiStore" withExtension:@"txt"];

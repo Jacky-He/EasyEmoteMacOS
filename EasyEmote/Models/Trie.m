@@ -70,7 +70,7 @@
         idx++;
     }
     if (idx < [input length]) return res;
-    res = [self random_n:curr maxlength:10];
+    res = [self random_n:curr maxlength:80];
     NSString* copy = [input substringToIndex:([input length]-1)];
     for (NSInteger i = 0; i < [res count]; i++) [res[i] set_first:[copy stringByAppendingString:[res[i] first]]];
     return res;

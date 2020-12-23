@@ -2,32 +2,42 @@
 
 @implementation EmoteInputController
 
--(BOOL)inputText:(NSString *)string client:(id)sender
+
+-(BOOL)handleEvent:(NSEvent *)event client:(id)sender
 {
+    extern IMKCandidates* candidates;
     _currentClient = sender;
-    //if contains whitespaces
-    if ([string containsString:@":"])
+    if ([event type] == keyUp) return false;
+    unsigned short keycode = [event keyCode];
+    NSString* s = [event characters];
+    NSLog(@"DEBUGMESSAGE: %@, %d", s, keycode);
+    if ([s containsString:@":"])
     {
         _starting = !_starting;
-        if (!_starting) return [self convert:string client:sender];
+        _doConvert = YES;
+        if (!_starting) return [self convert:s client:sender];
     }
-    
-    //convert to emoji if whitespace or end colon
-    
-    //if start colon, then just add the string to the original buffer
-    if (_starting)
-    {
-        if ([string rangeOfCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].location != NSNotFound) return [self convert:string client:sender];
-        [self originalBufferAppend:string client:sender];
-        return YES;
-    }
-    [self updateCandidatesWindow];
-    return NO;
+    if (!_starting) return false;
+    if (keycode == 36) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
+    else if (keycode == 51) [self handle_backspace:sender];
+    else if (keycode == 49) [self handle_space:sender];
+    else if (123 <= keycode && keycode <= 126) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]]; //arrow keys
+    else if (!s) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
+    else if ([s intValue] == 0) [self originalBufferAppend:s client:sender];
+    else [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
+//        [self handle_number:s client:sender];
+    return true;
 }
 
 -(void)activateServer:(id)sender
 {
     _currentClient = sender;
+}
+
+-(void)deactivateServer:(id)sender
+{
+    extern IMKCandidates* candidates;
+    [candidates hide];
 }
 
 -(void)commitComposition:(id)sender
@@ -84,7 +94,7 @@
     NSMutableString* original = [self originalBuffer];
     NSMutableString* composed = [self composedBuffer];
     
-    if ([_curr_candidates count] > 0)
+    if ([_curr_candidates count] > 0 && _doConvert)
     {
         [self setComposedBuffer:[_curr_candidates[0] second]];
         [self commitComposition:sender];
@@ -98,30 +108,32 @@
     return YES;
 }
 
--(BOOL)didCommandBySelector:(SEL)aSelector client:(id)sender
+-(void)handle_number:(NSString*)trigger client:(id)sender
 {
-    _currentClient = sender;
-    if ([self respondsToSelector:aSelector])
+    NSInteger val = [trigger intValue];
+    if (val < 1 || val > 9) return;
+    val--;
+    NSInteger target = _curr_page*9 + val;
+    if (0 <= target && target < [_curr_candidates count])
     {
-        NSString* bufferedText = [self originalBuffer];
-        if (bufferedText && [bufferedText length] > 0)
-        {
-            if (aSelector == @selector(insertNewline:) || aSelector == @selector(deleteBackward:))
-            {
-                [self performSelector:aSelector withObject:sender];
-                return YES;
-            }
-        }
+        [self setComposedBuffer:[_curr_candidates[target] second]];
+        [self commitComposition:sender];
     }
-    return NO;
 }
 
--(void)insertNewline:(id)sender
+-(void)handle_space:(id)sender
 {
-    [self convert:@"\n" client:sender];
+    _doConvert = NO;
+    [self convert:@" " client:sender];
 }
 
--(void)deleteBackward:(id)sender
+-(void)handle_newline:(id)sender
+{
+//    _doConvert = YES;
+//    [self convert:@"\n" client:sender];
+}
+
+-(void)handle_backspace:(id)sender
 {
     NSMutableString* originalText = [self originalBuffer];
     if (_insertionIndex > 0 && _insertionIndex <= [originalText length])
@@ -136,9 +148,13 @@
 
 -(void)candidateSelectionChanged:(NSAttributedString *)candidateString
 {
-//    [_currentClient setMarkedText:[candidateString string] selectionRange:NSMakeRange(_insertionIndex, 0) replacementRange:NSMakeRange(NSNotFound, NSNotFound)];
-//    _insertionIndex = [candidateString length];
-    return;
+    NSLog(@"DEBUGMESSAGE: Changed");
+    NSString* str = [candidateString string];
+    NSLog(@"DEBUGMESSAGE: MARK1");
+    _curr_index = [self get_index:str];
+    NSLog(@"DEBUGMESSAGE: MARK2");
+    _curr_page = [self get_page_with_index:_curr_index];
+    NSLog(@"DEBUGMESSAGE: curr_index: %ld, curr_page: %ld", _curr_index, _curr_page);
 }
 
 -(void)updateCandidatesWindow
@@ -154,11 +170,9 @@
     else
     {
         [candidates setPanelType:kIMKSingleColumnScrollingCandidatePanel];
-        NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-        NSFont* font = [NSFont fontWithName:@"Chalkboard" size:15];
-        [dict setValue:font forKey:@"NSFontAttributeName"];
+      
 //        [dict setValue:[NSNumber numberWithFloat:0.5] forKey:IMKCandidatesOpacityAttributeName];
-        [candidates setAttributes:dict];
+//        [candidates setAttributes:dict];
         //@assert that original buffer is not empty
         NSLog(@"DEBUGMESSAGE: MARK");
         [self update_curr_candidates];
@@ -176,8 +190,8 @@
         {
             NSArray* dict = [candidates attributeKeys];
             for (NSInteger i = 0; i < [dict count]; i++) NSLog(@"DEBUGMESSAGE: %@", dict[i]);
-
-            [candidates updateCandidates];
+//            [candidates updateCandidates];
+            [candidates setCandidateData:_candidate_strings];
             [candidates show:kIMKLocateCandidatesBelowHint];
         }
     }
@@ -188,26 +202,43 @@
     extern Trie* dict;
     if (_curr_candidates != nil) [_curr_candidates release];
     _curr_candidates = [[dict get_most_relevant:[self originalBuffer]] retain];
+    if (_candidate_strings != nil) [_candidate_strings release];
+    _candidate_strings = [[NSMutableArray alloc]init];
+    for (NSInteger i = 0; i < [_curr_candidates count]; i++) [_candidate_strings addObject:[[NSString alloc]initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]]];
 }
 
 -(NSArray*)candidates:(id)sender
 {
     _currentClient = sender;
-    NSMutableArray<NSString*>* array = [NSMutableArray array];
-    for (NSInteger i = 0; i < [_curr_candidates count]; i++)
-    {
-        NSString* tmp = [[[_curr_candidates[i] second] stringByAppendingString:@" "] stringByAppendingString:[_curr_candidates[i] first]];
-        [array addObject:tmp];
-    }
-    return array;
+    return _candidate_strings;
 }
 
 -(void)candidateSelected:(NSAttributedString *)candidateString
 {
     NSString* tmp = [candidateString string];
-    NSArray<NSString*>* line = [tmp componentsSeparatedByString:@":"];
+    NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" :"];
     [self setComposedBuffer:line[0]];
     [self commitComposition:_currentClient];
+}
+
+
+-(NSInteger)get_page_with_index:(NSInteger)candidateIdentifier // zero indexed
+{
+    return candidateIdentifier/9;
+}
+
+-(NSInteger)get_index:(id)candidateString // zero indexed
+{
+    NSLog(@"DEBUGMESSAGE: MARK3");
+    NSString* s = candidateString;
+    NSLog(@"DEBUGMESSAGE: MARK4");
+    NSArray<NSString*>* arr = _candidate_strings;
+    NSLog(@"DEBUGMESSAGE: MARK5");
+    for (NSInteger i = 0; i < [arr count]; i++)
+    {
+        if ([arr[i] isEqualToString:s]) return i;
+    }
+    return NSNotFound;
 }
 
 -(void)dealloc

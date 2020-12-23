@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #import <InputMethodKit/InputMethodKit.h>
+//#import <AppKit/AppKit.h>
+#import "Trie.h"
 
 const NSString* modeString = @"com.apple.inputmethod.emote";
 
@@ -11,6 +13,7 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
     BOOL _didConvert;
     BOOL _starting;
     id _currentClient;
+    NSMutableArray<Pair*>* _curr_candidates;
 }
 
 -(NSMutableString*)composedBuffer;
@@ -20,5 +23,6 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
 -(void)setOriginalBuffer:(NSString*)string;
 -(BOOL)convert:(NSString*)trigger client:(id)sender;
 -(void)updateCandidatesWindow;
+-(void)update_curr_candidates;
 
 @end

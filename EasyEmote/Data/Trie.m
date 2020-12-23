@@ -18,75 +18,67 @@
 
 -(void)insert:(NSString*)word unicodestr:(NSString*)unicode
 {
-    @autoreleasepool {
-        if (word == nil) return;
-        if ([self contains:word]) return;
-        Node curr = [self root];
+    if (word == nil) return;
+    if ([self contains:word]) return;
+    Node curr = [self root];
+    [curr set_cnt:([curr get_cnt]+1)];
+    for (NSInteger i = 0; i < [word length]; i++)
+    {
+        NSString* c = [word substringWithRange:NSMakeRange(i, 1)];
+        [curr add: c];
+        curr = [curr children][c];
         [curr set_cnt:([curr get_cnt]+1)];
-        for (NSInteger i = 0; i < [word length]; i++)
-        {
-            NSString* c = [word substringWithRange:NSMakeRange(i, 1)];
-            [curr add:c];
-            curr = [curr children][c];
-            [curr set_cnt:([curr get_cnt]+1)];
-        }
-        [curr set_unicode_str:unicode];
     }
+    [curr set_unicode_str:unicode];
 }
 
 -(BOOL)contains:(NSString*)word
 {
-    @autoreleasepool {
-        if (word == nil) return true;
-        Node curr = [self root];
-        NSInteger idx = 0;
-        while (idx < word.length && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
-        {
-            idx++;
-            curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
-        }
-        return idx == [word length] && [curr get_unicode_str] != nil;
+    if (word == nil) return true;
+    Node curr = [self root];
+    NSInteger idx = 0;
+    while (idx < word.length && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
+    {
+        curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
+        idx++;
     }
+    return idx == [word length] && [curr get_unicode_str] != nil;
 }
 
 -(NSString*)get_unicode_str:(NSString*)descr
 {
-    @autoreleasepool {
-        if (descr == nil) return nil;
-        Node curr = [self root];
-        NSInteger idx = 0;
-        while (idx < [descr length] && [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]] != nil)
-        {
-            idx++;
-            curr = [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]];
-        }
-        return idx == [descr length] ? [curr get_unicode_str] : nil;
+    if (descr == nil) return nil;
+    Node curr = [self root];
+    NSInteger idx = 0;
+    while (idx < [descr length] && [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]] != nil)
+    {
+        curr = [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]];
+        idx++;
     }
+    return idx == [descr length] ? [curr get_unicode_str] : nil;
 }
 
 -(NSMutableArray<Pair*>*)get_most_relevant:(NSString*)input
 {
-    @autoreleasepool {
-        NSMutableArray<Pair*>* res = [[NSMutableArray alloc] init];
-        if (input == nil) return res;
-        Node curr = [self root];
-        NSInteger idx = 0;
-        while (idx < [input length] && [curr children][[input substringWithRange:NSMakeRange(idx, 1)]] != nil)
-        {
-            idx++;
-            curr = [curr children][[input substringWithRange:NSMakeRange(idx, 1)]];
-        }
-        if (idx < [input length]) return res;
-        res = [self random_n:curr maxlength:10];
-        NSString* copy = [input substringToIndex:([input length]-1)];
-        for (NSInteger i = 0; i < [res count]; i++) [res[i] set_first:[copy stringByAppendingString:[res[i] first]]];
-        return res;
+    NSMutableArray<Pair*>* res = [NSMutableArray array];
+    if (input == nil) return res;
+    Node curr = [self root];
+    NSInteger idx = 0;
+    while (idx < [input length] && [curr children][[input substringWithRange:NSMakeRange(idx, 1)]] != nil)
+    {
+        curr = [curr children][[input substringWithRange:NSMakeRange(idx, 1)]];
+        idx++;
     }
+    if (idx < [input length]) return res;
+    res = [self random_n:curr maxlength:10];
+    NSString* copy = [input substringToIndex:([input length]-1)];
+    for (NSInteger i = 0; i < [res count]; i++) [res[i] set_first:[copy stringByAppendingString:[res[i] first]]];
+    return res;
 }
 
 -(NSMutableArray<Pair*>*)random_n:(Node)node maxlength:(NSInteger)num
 {
-    NSMutableArray<Pair*>* res = [[NSMutableArray alloc] init];
+    NSMutableArray<Pair*>* res = [NSMutableArray array];
     NSInteger remain = num;
     if ([node get_unicode_str] != nil)
     {
@@ -100,14 +92,11 @@
         NSInteger sub = MIN(remain, [children[i] get_cnt]);
         NSMutableArray<Pair*>* temp = [self random_n:children[i] maxlength:(sub)];
         [res addObjectsFromArray:temp];
-        [temp release];
         remain -= sub;
     }
-    @autoreleasepool {
-        for (int i = 0; i < [res count]; i++)
-        {
-            [res[i] set_first:[[node get_value] stringByAppendingString:[res[i] first]]];
-        }
+    for (int i = 0; i < [res count]; i++)
+    {
+        [res[i] set_first:[[node get_value] stringByAppendingString:[res[i] first]]];
     }
     return res;
 }

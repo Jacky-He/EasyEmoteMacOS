@@ -8,20 +8,20 @@
     self = [super init];
     if (self)
     {
-        _first = first;
-        _second = val2;
+        _first = [first retain];
+        _second = [val2 retain];
     }
     return self;
 }
 
 -(id)first
 {
-    return [self first];
+    return _first;
 }
 
 -(id)second
 {
-    return [self second];
+    return _second;
 }
 
 -(void)set_first:(id)first
@@ -32,6 +32,13 @@
 -(void)set_second:(id)second
 {
     _second = second;
+}
+
+-(void)dealloc
+{
+    [_first release];
+    [_second release];
+    [super dealloc];
 }
 
 @end

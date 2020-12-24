@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		8A6AC9702594EFCC00762532 /* libPods-EasyEmote.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC96F2594EFCC00762532 /* libPods-EasyEmote.a */; };
+		8A6AC97625951A2C00762532 /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6AC97525951A2C00762532 /* Preferences.m */; };
+		8A6AC9952595234700762532 /* YCMatrix.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9942595234700762532 /* YCMatrix.framework */; };
+		8A6AC9972595234B00762532 /* YCML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9962595234B00762532 /* YCML.framework */; };
 		8AB8BBC625915575008FA061 /* apple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 8AB8BBC525915575008FA061 /* apple.tiff */; };
 		8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB8BBCA2591563B008FA061 /* EmoteInputController.m */; };
 		8AF18D6F259196FE0071A8A7 /* emojiStore.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8AF18D6E259196FE0071A8A7 /* emojiStore.txt */; };
@@ -30,6 +33,10 @@
 		5E73A7EE0F25249BDE4B796A /* Pods-EasyEmote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyEmote.release.xcconfig"; path = "Target Support Files/Pods-EasyEmote/Pods-EasyEmote.release.xcconfig"; sourceTree = "<group>"; };
 		8A43797A2594EB4500E5B04A /* libFMDB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFMDB.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A6AC96F2594EFCC00762532 /* libPods-EasyEmote.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-EasyEmote.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A6AC97525951A2C00762532 /* Preferences.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
+		8A6AC97825951A3800762532 /* Preferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
+		8A6AC9942595234700762532 /* YCMatrix.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = YCMatrix.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A6AC9962595234B00762532 /* YCML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = YCML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AB8BBC525915575008FA061 /* apple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = apple.tiff; sourceTree = "<group>"; };
 		8AB8BBC925915633008FA061 /* EmoteInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmoteInputController.h; sourceTree = "<group>"; };
 		8AB8BBCA2591563B008FA061 /* EmoteInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmoteInputController.m; sourceTree = "<group>"; };
@@ -53,6 +60,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A6AC9972595234B00762532 /* YCML.framework in Frameworks */,
+				8A6AC9952595234700762532 /* YCMatrix.framework in Frameworks */,
 				8A6AC9702594EFCC00762532 /* libPods-EasyEmote.a in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				E93074B70A5C264700470842 /* InputMethodKit.framework in Frameworks */,
@@ -133,6 +142,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8A6AC9962595234B00762532 /* YCML.framework */,
+				8A6AC9942595234700762532 /* YCMatrix.framework */,
 				8A6AC96F2594EFCC00762532 /* libPods-EasyEmote.a */,
 				8A43797A2594EB4500E5B04A /* libFMDB.a */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
@@ -152,6 +163,8 @@
 				8AF18D7D259199500071A8A7 /* TrieNode.h */,
 				8AF18D75259199020071A8A7 /* Trie.h */,
 				8AF18D762591990C0071A8A7 /* Trie.m */,
+				8A6AC97525951A2C00762532 /* Preferences.m */,
+				8A6AC97825951A3800762532 /* Preferences.h */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -280,6 +293,7 @@
 				8AF18D8225926D280071A8A7 /* Pair.m in Sources */,
 				8AF18D7B259199480071A8A7 /* TrieNode.m in Sources */,
 				8AF18D772591990C0071A8A7 /* Trie.m in Sources */,
+				8A6AC97625951A2C00762532 /* Preferences.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */,
 				8AF18D932593CF1A0071A8A7 /* CandidateWindow.m in Sources */,
@@ -304,6 +318,12 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/FMDB\"",
+					"$(PROJECT_DIR)/YCML-master/**",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "\"$(LOCAL_LIBRARY_DIR)/Input Methods/\"";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -342,6 +362,12 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/FMDB\"",
+					"$(PROJECT_DIR)/YCML-master/**",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";

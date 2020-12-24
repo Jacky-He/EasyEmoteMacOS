@@ -1,0 +1,4 @@
+language: objective-c
+xcode_project: YCML.xcodeproj
+osx_image: xcode7
+xcode_scheme: YCML

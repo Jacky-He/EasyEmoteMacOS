@@ -5,6 +5,9 @@
       location = "group:EasyEmote.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:YCML-master/YCML.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

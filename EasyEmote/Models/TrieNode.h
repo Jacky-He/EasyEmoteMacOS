@@ -14,7 +14,7 @@
     TrieNode* _next_in_level;
 }
 
--(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent numlevels:(NSInteger)levels;
+-(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent;
 -(void)add:(NSString*)child;
 -(NSMutableDictionary*)children;
 -(void)set_unicode_str:(NSString*)str;
@@ -24,9 +24,10 @@
 -(void)set_descr_str:(NSString*)str;
 -(void)set_cnt:(NSInteger)val;
 -(NSString*)get_value;
--(NSArray<NSMutableDictionary*>*)get_first_occurrences;
--(NSArray<NSMutableDictionary*>*)get_last_occurrences;
+-(NSMutableArray<NSMutableDictionary*>*)get_first_occurrences;
+-(NSMutableArray<NSMutableDictionary*>*)get_last_occurrences;
 -(TrieNode*)get_next_in_level;
 -(void)set_next_in_level:(TrieNode*)node;
+-(void)set_numlevels:(NSInteger)levels;
 
 @end

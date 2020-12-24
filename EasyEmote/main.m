@@ -69,14 +69,15 @@ int main(int argc, char * argv[])
             NSString* codestr = [parts[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             NSString* descr = [parts[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             NSString* unicodestr = toUTF16Sequence(codestr);
-            [dict insert:[[@":" stringByAppendingString:descr] stringByAppendingString:@":"] unicodestr:unicodestr];
+            NSString* word = [[@":" stringByAppendingString:descr] stringByAppendingString:@":"];
+            [dict insert:[word lowercaseString] unicodestr:unicodestr];
         }
     }
     @catch (NSException* exception)
     {
         NSLog(@"DEBUGMESSAGE: Error getting contents of file");
     }
-    
+    [dict load_properties:[dict root] currlevel:0];
     NSLog(@"DEBUGMESSAGE: LOL2");
     
     [[NSApplication sharedApplication] run];

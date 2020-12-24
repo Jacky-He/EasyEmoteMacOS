@@ -201,7 +201,7 @@
 {
     extern Trie* dict;
     if (_curr_candidates != nil) [_curr_candidates release];
-    _curr_candidates = [[dict get_most_relevant:[self originalBuffer]] retain];
+    _curr_candidates = [[dict subsequence_search:[self originalBuffer]] retain];
     if (_candidate_strings != nil) [_candidate_strings release];
     _candidate_strings = [[NSMutableArray alloc]init];
     for (NSInteger i = 0; i < [_curr_candidates count]; i++) [_candidate_strings addObject:[[NSString alloc]initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]]];

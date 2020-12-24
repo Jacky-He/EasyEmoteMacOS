@@ -10,7 +10,7 @@
 
 @implementation TrieNode
 
--(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent numlevels:(NSInteger)levels
+-(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent
 {
     self = [super init];
     if (self)
@@ -18,7 +18,6 @@
         _value = [value retain];
         _parent = parent;
         _cnt = 0;
-        _numlevels = levels;
     }
     return self;
 }
@@ -27,7 +26,7 @@
 {
     NSMutableDictionary* children = [self children];
     if ([children objectForKey:child] != nil) return;
-    TrieNode* newnode = [[TrieNode alloc]initialize:child parent:self numlevels:_numlevels];
+    TrieNode* newnode = [[TrieNode alloc]initialize:child parent:self];
     [children setObject: newnode forKey:child];
     [newnode release];
 }
@@ -58,7 +57,7 @@
 {
     if (_last_occurrences == nil)
     {
-        _last_occurrences = [[NSMutableArray alloc]initWithObjects:nil count:_numlevels];
+        _last_occurrences = [[NSMutableArray alloc]initWithCapacity:_numlevels];
         for (NSInteger i = 0; i < _numlevels; i++)
         {
             NSMutableDictionary* obj = [[NSMutableDictionary alloc] init];
@@ -68,6 +67,11 @@
         }
     }
     return _last_occurrences;
+}
+
+-(void)set_numlevels:(NSInteger)levels
+{
+    _numlevels = levels;
 }
 
 -(void)set_next_in_level:(TrieNode *)node

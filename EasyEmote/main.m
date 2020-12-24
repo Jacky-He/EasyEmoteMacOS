@@ -13,6 +13,7 @@ const NSString* kConnectionName = @"EasyEmote_Connection";
 IMKServer* server;
 IMKCandidates* candidates = nil;
 Trie* dict;
+NSMutableDictionary* DUMMYDICT;
 
 NSString* toUTF16(NSString* str)
 {
@@ -53,6 +54,7 @@ int main(int argc, char * argv[])
     server = [[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier];
     candidates = [[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain];
    
+    DUMMYDICT = [[NSMutableDictionary alloc]init];
     //load emojis
     dict = [[Trie alloc] init];
     NSURL* url = [[NSBundle mainBundle] URLForResource:@"emojiStore" withExtension:@"txt"];
@@ -69,18 +71,24 @@ int main(int argc, char * argv[])
             NSString* codestr = [parts[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             NSString* descr = [parts[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             NSString* unicodestr = toUTF16Sequence(codestr);
-            NSString* word = [[@":" stringByAppendingString:descr] stringByAppendingString:@":"];
-            [dict insert:[word lowercaseString] unicodestr:unicodestr];
+            [dict insert:[descr lowercaseString] unicodestr:unicodestr];
         }
     }
     @catch (NSException* exception)
     {
         NSLog(@"DEBUGMESSAGE: Error getting contents of file");
     }
-    [dict load_properties:[dict root] currlevel:0];
+    [dict load_properties:[dict root]];
+    NSMutableArray<Pair*>* arr = [dict subsequence_search:@"ye"];
+    for (NSInteger i = 0; i < [arr count]; i++)
+    {
+        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
+    }
     NSLog(@"DEBUGMESSAGE: LOL2");
+    [NSThread sleepForTimeInterval:10000000000];
     
-    [[NSApplication sharedApplication] run];
+//    [[NSApplication sharedApplication] run];
+    [DUMMYDICT release];
     [dict release];
     [server release];
     [candidates release];

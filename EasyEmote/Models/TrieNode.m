@@ -39,39 +39,60 @@
 
 -(NSMutableArray<NSMutableDictionary*>*)get_first_occurrences
 {
+    extern NSMutableDictionary* DUMMYDICT;
     if (_first_occurrences == nil)
     {
-        _first_occurrences = [[NSMutableArray alloc]initWithCapacity:_numlevels];
-        for (NSInteger i = 0; i < _numlevels; i++)
-        {
-            NSMutableDictionary* obj = [[NSMutableDictionary alloc] init];
-            _first_occurrences[i] = obj;
-            [_first_occurrences addObject:obj];
-            [obj release];
-        }
+        _first_occurrences = [[NSMutableArray alloc] initWithCapacity:_numlevels];
+        for (NSInteger i = 0; i < _numlevels; i++) [_first_occurrences addObject:DUMMYDICT];
     }
     return _first_occurrences;
 }
 
+-(NSMutableDictionary*)get_first_occurrences_at_level:(NSInteger)level
+{
+    extern NSMutableDictionary* DUMMYDICT;
+    NSMutableArray<NSMutableDictionary*>* first  = [self get_first_occurrences];
+    if (first[level] == DUMMYDICT)
+    {
+        NSMutableDictionary* obj = [[NSMutableDictionary alloc] init];
+        [first setObject:obj atIndexedSubscript:level];
+        [obj release];
+    }
+    return first[level];
+}
+
 -(NSMutableArray<NSMutableDictionary*>*)get_last_occurrences
 {
+    extern NSMutableDictionary* DUMMYDICT;
     if (_last_occurrences == nil)
     {
-        _last_occurrences = [[NSMutableArray alloc]initWithCapacity:_numlevels];
-        for (NSInteger i = 0; i < _numlevels; i++)
-        {
-            NSMutableDictionary* obj = [[NSMutableDictionary alloc] init];
-            _last_occurrences[i] = obj;
-            [_last_occurrences addObject: obj];
-            [obj release];
-        }
+        _last_occurrences = [[NSMutableArray alloc] initWithCapacity:_numlevels];
+        for (NSInteger i = 0; i < _numlevels; i++) [_last_occurrences addObject:DUMMYDICT];
     }
     return _last_occurrences;
+}
+
+-(NSMutableDictionary*)get_last_occurrences_at_level:(NSInteger)level
+{
+    extern NSMutableDictionary* DUMMYDICT;
+    NSMutableArray<NSMutableDictionary*>* last = [self get_last_occurrences];
+    if (last[level] == DUMMYDICT)
+    {
+        NSMutableDictionary* obj = [[NSMutableDictionary alloc] init];
+        [last setObject:obj atIndexedSubscript:level];
+        [obj release];
+    }
+    return last[level];
 }
 
 -(void)set_numlevels:(NSInteger)levels
 {
     _numlevels = levels;
+}
+
+-(NSInteger)get_numlevels
+{
+    return _numlevels;
 }
 
 -(void)set_next_in_level:(TrieNode *)node

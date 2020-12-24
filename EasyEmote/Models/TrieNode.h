@@ -29,5 +29,8 @@
 -(TrieNode*)get_next_in_level;
 -(void)set_next_in_level:(TrieNode*)node;
 -(void)set_numlevels:(NSInteger)levels;
+-(NSInteger)get_numlevels;
+-(NSMutableDictionary*)get_first_occurrences_at_level:(NSInteger)level;
+-(NSMutableDictionary*)get_last_occurrences_at_level:(NSInteger)level;
 
 @end

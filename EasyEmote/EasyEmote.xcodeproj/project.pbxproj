@@ -9,8 +9,11 @@
 /* Begin PBXBuildFile section */
 		8A6AC9702594EFCC00762532 /* libPods-EasyEmote.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC96F2594EFCC00762532 /* libPods-EasyEmote.a */; };
 		8A6AC97625951A2C00762532 /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6AC97525951A2C00762532 /* Preferences.m */; };
-		8A6AC9952595234700762532 /* YCMatrix.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9942595234700762532 /* YCMatrix.framework */; };
-		8A6AC9972595234B00762532 /* YCML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9962595234B00762532 /* YCML.framework */; };
+		8A6AC9E32595A5E600762532 /* YCMatrix.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9942595234700762532 /* YCMatrix.framework */; };
+		8A6AC9E42595A5E600762532 /* YCMatrix.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8A6AC9942595234700762532 /* YCMatrix.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8A6AC9E52595A5E700762532 /* YCML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9962595234B00762532 /* YCML.framework */; };
+		8A6AC9E62595A5E700762532 /* YCML.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8A6AC9962595234B00762532 /* YCML.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8A6AC9E92596748A00762532 /* Record.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6AC9E82596732B00762532 /* Record.m */; };
 		8AB8BBC625915575008FA061 /* apple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 8AB8BBC525915575008FA061 /* apple.tiff */; };
 		8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB8BBCA2591563B008FA061 /* EmoteInputController.m */; };
 		8AF18D6F259196FE0071A8A7 /* emojiStore.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8AF18D6E259196FE0071A8A7 /* emojiStore.txt */; };
@@ -22,6 +25,20 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		E93074B70A5C264700470842 /* InputMethodKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E93074B60A5C264700470842 /* InputMethodKit.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8A6AC9CA2595A4FD00762532 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8A6AC9E42595A5E600762532 /* YCMatrix.framework in CopyFiles */,
+				8A6AC9E62595A5E700762532 /* YCML.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -37,6 +54,8 @@
 		8A6AC97825951A3800762532 /* Preferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
 		8A6AC9942595234700762532 /* YCMatrix.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = YCMatrix.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A6AC9962595234B00762532 /* YCML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = YCML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A6AC9E72596731E00762532 /* Record.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
+		8A6AC9E82596732B00762532 /* Record.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Record.m; sourceTree = "<group>"; };
 		8AB8BBC525915575008FA061 /* apple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = apple.tiff; sourceTree = "<group>"; };
 		8AB8BBC925915633008FA061 /* EmoteInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmoteInputController.h; sourceTree = "<group>"; };
 		8AB8BBCA2591563B008FA061 /* EmoteInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmoteInputController.m; sourceTree = "<group>"; };
@@ -60,9 +79,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A6AC9972595234B00762532 /* YCML.framework in Frameworks */,
-				8A6AC9952595234700762532 /* YCMatrix.framework in Frameworks */,
 				8A6AC9702594EFCC00762532 /* libPods-EasyEmote.a in Frameworks */,
+				8A6AC9E32595A5E600762532 /* YCMatrix.framework in Frameworks */,
+				8A6AC9E52595A5E700762532 /* YCML.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				E93074B70A5C264700470842 /* InputMethodKit.framework in Frameworks */,
 			);
@@ -163,6 +182,8 @@
 				8AF18D7D259199500071A8A7 /* TrieNode.h */,
 				8AF18D75259199020071A8A7 /* Trie.h */,
 				8AF18D762591990C0071A8A7 /* Trie.m */,
+				8A6AC9E72596731E00762532 /* Record.h */,
+				8A6AC9E82596732B00762532 /* Record.m */,
 				8A6AC97525951A2C00762532 /* Preferences.m */,
 				8A6AC97825951A3800762532 /* Preferences.h */,
 			);
@@ -206,6 +227,7 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
+				8A6AC9CA2595A4FD00762532 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -293,6 +315,7 @@
 			files = (
 				8AF18D8225926D280071A8A7 /* Pair.m in Sources */,
 				8AF18D7B259199480071A8A7 /* TrieNode.m in Sources */,
+				8A6AC9E92596748A00762532 /* Record.m in Sources */,
 				8AF18D772591990C0071A8A7 /* Trie.m in Sources */,
 				8A6AC97625951A2C00762532 /* Preferences.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,

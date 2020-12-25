@@ -78,13 +78,15 @@ int main(int argc, char * argv[])
     {
         NSLog(@"DEBUGMESSAGE: Error getting contents of file");
     }
-    [dict load_properties:[dict root]];
-    NSMutableArray<Pair*>* arr = [dict subsequence_search:@"ye"];
-    for (NSInteger i = 0; i < [arr count]; i++)
-    {
-        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
-    }
-    NSLog(@"DEBUGMESSAGE: LOL2");
+//    [dict load_properties:[dict root]];
+//    NSMutableArray<Pair*>* arr = [dict subsequence_search:@"ye"];
+//    for (NSInteger i = 0; i < [arr count]; i++)
+//    {
+//        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
+//    }
+//    NSLog(@"DEBUGMESSAGE: LOL2");
+    NSString* s = [[NSBundle mainBundle] resourcePath];
+    NSLog(@"DEBUGMESSAGE: %@", s);
     [NSThread sleepForTimeInterval:10000000000];
     
 //    [[NSApplication sharedApplication] run];

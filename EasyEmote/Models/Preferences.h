@@ -1,12 +1,16 @@
-//
-//  Preferences.h
-//  EasyEmote
-//
-//  Created by Jacky He on 2020-12-24.
-//
+#import <Foundation/Foundation.h>
+#import <YCML/YCML.h>
+#import <fmdb/FMDB.h>
+#import "Pair.h"
 
-#ifndef Preferences_h
-#define Preferences_h
+@interface Preferences : NSObject
+{
+    YCFFN* _prediction_model;
+    FMDatabase* db;
+}
 
+-(Preferences*)initialize;
+-(void)sort_based_on_history:(NSArray<Pair*>*)arr;
+-(void)insert_new_entry:(Pair*)entry;
 
-#endif /* Preferences_h */
+@end

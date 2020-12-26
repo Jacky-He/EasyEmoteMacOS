@@ -123,6 +123,17 @@
     _descrstr = [str retain];
 }
 
+-(void)set_record:(Record*)r
+{
+    if (_record != nil) [_record release];
+    _record = [r retain];
+}
+
+-(Record*)get_record
+{
+    return _record;
+}
+
 -(NSString*)get_descr_str
 {
     return _descrstr;
@@ -145,6 +156,7 @@
 
 -(void)dealloc
 {
+    [_record release];
     [_value release];
     [_children release];
     [_unicodestr release];

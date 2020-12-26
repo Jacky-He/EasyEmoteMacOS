@@ -225,7 +225,7 @@
     NSString* tmp = [candidateString string];
     NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" "];
     [self setComposedBuffer:line[0]];
-    Pair* obj = [[Pair alloc]initialize:line[1] second:line[0]];
+    Triplet* obj = [[Triplet alloc]initialize:line[1] second:line[0] third:line[0]];
     [preferences insert_new_entry:obj candidates:_curr_candidates];
     [obj release];
     [self commitComposition:_currentClient];

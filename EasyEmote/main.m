@@ -81,22 +81,12 @@ int main(int argc, char * argv[])
         NSLog(@"DEBUGMESSAGE: Error getting contents of file");
     }
     [dict load_properties:[dict root]];
-//    NSMutableArray<Pair*>* arr = [dict subsequence_search:@"ye"];
-//    for (NSInteger i = 0; i < [arr count]; i++)
-//    {
-//        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
-//    }
     preferences = [[Preferences alloc] initialize];
-//    [preferences insert_new_entry:arr[10] candidates:arr];
-//    [preferences insert_new_entry:arr[10] candidates:arr];
-//    [preferences sort_based_on_history:arr];
-//    for (NSInteger i = 0; i < [arr count]; i++)
-//    {
-//        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
-//    }
-
+    NSMutableArray<Triplet*>* allemotes = [dict subsequence_search:@""];
+    [preferences load_all_tables:allemotes];
+    [preferences load_all_emote_records];
     NSLog(@"DEBUGMESSAGE: LOL2");
-
+    
     [[NSApplication sharedApplication] run];
     [preferences release];
     [DUMMYDICT release];

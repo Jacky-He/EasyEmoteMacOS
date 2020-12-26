@@ -1,8 +1,10 @@
 #import <YCML/YCML.h>
 #import <fmdb/FMDB.h>
+#import "Triplet.h"
 #import "Pair.h"
 #import "Record.h"
 #import "CHCSVParser.h"
+#import "Trie.h"
 
 @interface Preferences : NSObject
 {
@@ -11,7 +13,10 @@
 }
 
 -(Preferences*)initialize;
--(void)sort_based_on_history:(NSArray<Pair*>*)arr;
--(void)insert_new_entry:(Pair*)entry candidates:(NSArray<Pair*>*)potential;
+-(void)sort_based_on_history:(NSArray<Triplet*>*)arr;
+-(void)insert_new_entry:(Triplet*)entry candidates:(NSArray<Triplet*>*)potential;
+-(void)load_all_tables:(NSMutableArray<Triplet*>*)arr;
+-(Record*)get_record:(NSString*)emote output:(double)res;
+-(void)load_all_emote_records;
 
 @end

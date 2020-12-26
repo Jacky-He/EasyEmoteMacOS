@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import "Record.h"
 
 @interface TrieNode:NSObject
 {
@@ -12,6 +13,7 @@
     NSMutableArray<NSMutableDictionary*>* _first_occurrences;
     NSMutableArray<NSMutableDictionary*>* _last_occurrences;
     TrieNode* _next_in_level;
+    Record* _record;
 }
 
 -(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent;
@@ -32,5 +34,7 @@
 -(NSInteger)get_numlevels;
 -(NSMutableDictionary*)get_first_occurrences_at_level:(NSInteger)level;
 -(NSMutableDictionary*)get_last_occurrences_at_level:(NSInteger)level;
+-(void)set_record:(Record*)r;
+-(Record*)get_record;
 
 @end

@@ -15,7 +15,7 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
     NSInteger _curr_index;
     NSInteger _curr_page;
     id _currentClient;
-    NSMutableArray<Pair*>* _curr_candidates;
+    NSMutableArray<Triplet*>* _curr_candidates;
     NSMutableArray<NSString*>* _candidate_strings;
 }
 

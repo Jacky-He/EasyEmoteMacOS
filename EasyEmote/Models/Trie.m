@@ -36,6 +36,34 @@
     [curr set_descr_str:[[@":" stringByAppendingString:word] stringByAppendingString:@":"]];
 }
 
+-(void)update_record:(NSString*)word record:(Record*)r
+{
+    if (word == nil) return;
+    Node curr = [self root];
+    NSInteger idx = 0;
+    while (idx < [word length] && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
+    {
+        curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
+        idx++;
+    }
+    NSLog(@"dfas");
+    if (idx != [word length]) return;
+    [curr set_record: r];
+}
+
+-(Record*)get_record:(NSString*)word
+{
+    if (word == nil) return nil;
+    Node curr = [self root];
+    NSInteger idx = 0;
+    while (idx < [word length] && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
+    {
+        curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
+        idx++;
+    }
+    return idx == [word length] ? [curr get_record] : nil;
+}
+
 -(BOOL)contains:(NSString*)word
 {
     if (word == nil) return true;
@@ -62,9 +90,9 @@
     return idx == [descr length] ? [curr get_unicode_str] : nil;
 }
 
--(NSMutableArray<Pair*>*)prefix_search:(NSString*)input
+-(NSMutableArray<Triplet*>*)prefix_search:(NSString*)input
 {
-    NSMutableArray<Pair*>* res = [NSMutableArray array];
+    NSMutableArray<Triplet*>* res = [NSMutableArray array];
     if (input == nil) return res;
     Node curr = [self root];
     NSInteger idx = 0;
@@ -80,21 +108,21 @@
     return res;
 }
 
--(NSMutableArray<Pair*>*)random_n:(Node)node maxlength:(NSInteger)num
+-(NSMutableArray<Triplet*>*)random_n:(Node)node maxlength:(NSInteger)num
 {
-    NSMutableArray<Pair*>* res = [NSMutableArray array];
+    NSMutableArray<Triplet*>* res = [NSMutableArray array];
     NSInteger remain = num;
     if ([node get_unicode_str] != nil)
     {
         remain--;
-        [res addObject:[[Pair alloc] initialize:@"" second:[node get_unicode_str]]];
+        [res addObject:[[Triplet alloc] initialize:@"" second:[node get_unicode_str] third:[node get_record]]];
     }
     NSArray<Node>* children = [[node children] allValues];
     for (NSInteger i = 0; i < [children count]; i++)
     {
         if (remain <= 0) break;
         NSInteger sub = MIN(remain, [children[i] get_cnt]);
-        NSMutableArray<Pair*>* temp = [self random_n:children[i] maxlength:(sub)];
+        NSMutableArray<Triplet*>* temp = [self random_n:children[i] maxlength:(sub)];
         [res addObjectsFromArray:temp];
         remain -= sub;
     }
@@ -165,20 +193,20 @@
     }
 }
 
--(void)dfs_get_emote:(Node)curr arr:(NSMutableArray<Pair*>*)res
+-(void)dfs_get_emote:(Node)curr arr:(NSMutableArray<Triplet*>*)res
 {
     for (Node each in [[curr children] allValues]) [self dfs_get_emote:each arr:res];
-    if ([curr get_unicode_str] != nil) [res addObject:[[Pair alloc]initialize:[curr get_descr_str] second:[curr get_unicode_str]]];
+    if ([curr get_unicode_str] != nil) [res addObject:[[Triplet alloc]initialize:[curr get_descr_str] second:[curr get_unicode_str] third:[curr get_record]]];
 }
 
--(NSMutableArray<Pair*>*)all_emotes_in_subtrees:(Node)curr
+-(NSMutableArray<Triplet*>*)all_emotes_in_subtrees:(Node)curr
 {
-    NSMutableArray<Pair*>* res = [NSMutableArray array];
+    NSMutableArray<Triplet*>* res = [NSMutableArray array];
     [self dfs_get_emote:curr arr:res];
     return res;
 }
 
--(void)subsequence_search_helper:(NSString*)sequence curridx:(NSInteger)idx currnode:(Node)curr arr:(NSMutableArray<Pair*>*)res
+-(void)subsequence_search_helper:(NSString*)sequence curridx:(NSInteger)idx currnode:(Node)curr arr:(NSMutableArray<Triplet*>*)res
 {
     extern NSMutableDictionary* DUMMYDICT;
     if ([sequence length] <= idx)
@@ -203,9 +231,9 @@
     }
 }
 
--(NSMutableArray<Pair*>*)subsequence_search:(NSString *)sequence
+-(NSMutableArray<Triplet*>*)subsequence_search:(NSString *)sequence
 {
-    NSMutableArray<Pair*>* res = [NSMutableArray array];
+    NSMutableArray<Triplet*>* res = [NSMutableArray array];
     [self subsequence_search_helper:sequence curridx:0 currnode:[self root] arr:res];
     return res;
 }

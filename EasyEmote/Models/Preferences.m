@@ -79,51 +79,84 @@
     return _db;
 }
 
--(void)sort_based_on_history:(NSMutableArray<Pair*>*)arr
+-(void)sort_based_on_history:(NSMutableArray<Triplet*>*)arr
 {
-    YCFFN* model = [self get_prediction_model];
-    if (model == nil) return;
-    NSMutableArray<Pair*>* doublepair = [[NSMutableArray alloc]init];
-    NSInteger cnt = [arr count];
-    for (NSInteger i = 0; i < cnt; i++)
-    {
-        Record* r = [self get_record:arr[i] output:0];
-        if (r == nil)
+    [arr sortUsingComparator:^NSComparisonResult(id a, id b) {
+        Record* r1 = [(Triplet*)a third];
+        Record* r2 = [(Triplet*)b third];
+        if (r1 == nil || r2 == nil)
         {
-            NSNumber* n = [NSNumber numberWithDouble:-1.0];
-            Pair* obj = [[Pair alloc] initialize:arr[i] second:n];
-            [doublepair addObject:obj];
-            [obj release];
-            [n release];
+            if (r1 == r2) return NSOrderedSame;
+            if (r1 == nil) return NSOrderedDescending;
+            return NSOrderedAscending;
         }
-        else
+        if ([r1 ave_int] != [r2 ave_int])
         {
-            double* mat = malloc(sizeof(double)*4);
-            mat[0] = [r total_select];
-            mat[1] = [r mago_select];
-            mat[2] = [r wago_select];
-            mat[3] = [r ave_int];
-            Matrix* input = [Matrix matrixFromArray:mat rows:4 columns:1];
-            Matrix* output = [model activateWithMatrix:input];
-            double pre = [output valueAtRow:0 column:0];
-            NSNumber* n = [NSNumber numberWithDouble:pre];
-            Pair* obj = [[Pair alloc]initialize:arr[i] second:n];
-            [doublepair addObject:obj];
-            free(mat);
-            [obj release];
-            [n release];
+            if ([r1 ave_int] < 0) return NSOrderedDescending;
+            if ([r2 ave_int] < 0) return NSOrderedAscending;
+            if ([r1 ave_int] < [r2 ave_int]) return NSOrderedAscending;
+            return NSOrderedDescending;
         }
-    }
-    [doublepair sortUsingComparator:^NSComparisonResult(id a, id b) {
-        NSNumber* n1 = [(Pair*)a second];
-        NSNumber* n2 = [(Pair*)b second];
-        return [n2 compare:n1];
+        if ([r1 wago_select] != [r2 wago_select])
+        {
+            if ([r1 wago_select] > [r2 wago_select]) return NSOrderedAscending;
+            return NSOrderedDescending;
+        }
+        if ([r1 mago_select] != [r2 mago_select])
+        {
+            if ([r1 mago_select] > [r2 mago_select]) return NSOrderedAscending;
+            return NSOrderedDescending;
+        }
+        if ([r1 total_select] != [r2 total_select])
+        {
+            if ([r1 total_select] > [r2 total_select]) return NSOrderedAscending;
+            return NSOrderedDescending;
+        }
+        return NSOrderedSame;
     }];
-    for (NSInteger i = 0; i < [doublepair count]; i++) [arr setObject:[doublepair[i] first] atIndexedSubscript:i];
-    [doublepair release];
+//    YCFFN* model = [self get_prediction_model];
+//    if (model == nil) return;
+//    NSMutableArray<Pair*>* doublepair = [[NSMutableArray alloc]init];
+//    NSInteger cnt = [arr count];
+//    for (NSInteger i = 0; i < cnt; i++)
+//    {
+//        Record* r = [self get_record:arr[i] output:0];
+//        if (r == nil)
+//        {
+//            NSNumber* n = [NSNumber numberWithDouble:-1.0];
+//            Pair* obj = [[Pair alloc] initialize:arr[i] second:n];
+//            [doublepair addObject:obj];
+//            [obj release];
+//            [n release];
+//        }
+//        else
+//        {
+//            double* mat = malloc(sizeof(double)*4);
+//            mat[0] = [r total_select];
+//            mat[1] = [r mago_select];
+//            mat[2] = [r wago_select];
+//            mat[3] = [r ave_int];
+//            Matrix* input = [Matrix matrixFromArray:mat rows:4 columns:1];
+//            Matrix* output = [model activateWithMatrix:input];
+//            double pre = [output valueAtRow:0 column:0];
+//            NSNumber* n = [NSNumber numberWithDouble:pre];
+//            Pair* obj = [[Pair alloc]initialize:arr[i] second:n];
+//            [doublepair addObject:obj];
+//            free(mat);
+//            [obj release];
+//            [n release];
+//        }
+//    }
+//    [doublepair sortUsingComparator:^NSComparisonResult(id a, id b) {
+//        NSNumber* n1 = [(Pair*)a second];
+//        NSNumber* n2 = [(Pair*)b second];
+//        return [n2 compare:n1];
+//    }];
+//    for (NSInteger i = 0; i < [doublepair count]; i++) [arr setObject:[doublepair[i] first] atIndexedSubscript:i];
+//    [doublepair release];
 }
 
--(Record*)get_record:(Pair*)p output:(double)res
+-(Record*)get_record:(NSString*)emote output:(double)res
 {
     FMDatabase* db = [self get_db];
     if (![db open])
@@ -131,6 +164,15 @@
         NSLog(@"DEBUGMESSAGE: failed to open sqlite database");
         return nil;
     }
+    Record* r = [self get_record_helper:emote output:res];
+    [db close];
+    return r;
+}
+
+-(Record*)get_record_helper:(NSString*)emote output:(double)res
+{
+    //assert db is open
+    FMDatabase* db = [self get_db];
     NSDate* curr = [NSDate date];
     NSTimeInterval timestamp = [curr timeIntervalSinceReferenceDate];
     NSInteger roundedtime = round(timestamp);
@@ -140,17 +182,17 @@
     int mago_select = 0;
     int total_select = 0;
     double ave_int = -1.0;
-    NSString* sql = [NSString stringWithFormat: @"CREATE TABLE if not exists `%@` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `timestamp` INTEGER NOT NULL);", [p first]];
+    NSString* sql = [NSString stringWithFormat: @"CREATE TABLE if not exists `%@` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `timestamp` INTEGER NOT NULL);", emote];
     if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE error = %@", [db lastErrorMessage]);
-    sql = [NSString stringWithFormat: @"SELECT COUNT(*) FROM `%@` WHERE `timestamp`>=%ld;", [p first], wago];
+    sql = [NSString stringWithFormat: @"SELECT COUNT(*) FROM `%@` WHERE `timestamp`>=%ld;", emote, wago];
     FMResultSet *s = [db executeQuery:sql];
     if ([s next]) wago_select = [s intForColumnIndex:0];
     [s close];
-    sql = [NSString stringWithFormat: @"SELECT COUNT(*) FROM `%@` WHERE `timestamp`>=%ld;", [p first], mago];
+    sql = [NSString stringWithFormat: @"SELECT COUNT(*) FROM `%@` WHERE `timestamp`>=%ld;", emote, mago];
     s = [db executeQuery:sql];
     if ([s next]) mago_select = [s intForColumnIndex:0];
     [s close];
-    sql = [NSString stringWithFormat:@"SELECT ave_interval, numselection FROM `interval` WHERE emoji='%@'", [p first]];
+    sql = [NSString stringWithFormat:@"SELECT ave_interval, numselection FROM `interval` WHERE emoji='%@'", emote];
     s = [db executeQuery:sql];
     if ([s next])
     {
@@ -158,14 +200,12 @@
         total_select = [s intForColumn:@"numselection"];
     }
     [s close];
-    [db close];
-    if (ave_int < 0) return nil;
     return [[Record alloc] initialize:res total_select:total_select mago_select:mago_select wago_select:wago_select ave_int:ave_int];
 }
 
 -(void)append_to_CSV:(Record*)r
 {
-    if (r == nil) return;
+    if ([r ave_int] < 0 || r == nil) return;
     NSLog(@"DEBUGMESSAGE: APPENDED");
     NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
     NSString* s = [NSString stringWithFormat:@"%d,%d,%d,%.f,%.f\n", [r total_select], [r mago_select], [r wago_select], [r ave_int], [r res]];
@@ -181,7 +221,54 @@
     else [filemanager createFileAtPath:path contents:[s dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
 }
 
--(void)insert_new_entry:(Pair*)entry candidates:(NSArray<Pair*>*)potential
+-(void)load_all_tables:(NSMutableArray<Triplet*>*)arr
+{
+    FMDatabase* db = [self get_db];
+    if (![db open])
+    {
+        NSLog(@"DEBUGMESSAGE: failed to open sqlite database");
+        return;
+    }
+    NSString* q = @"CREATE TABLE if not exists `interval` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `emoji` TEXT NOT NULL UNIQUE, `ave_interval` REAL NOT NULL, `numselection` INTEGER NOT NULL, `last_seen` INTEGER NOT NULL);";
+    if (![db executeStatements:q]) NSLog(@"DEBUGMESSAGE: error = %@", [db lastErrorMessage]);
+    for (NSInteger i = 0; i < [arr count]; i++)
+    {
+        NSString* sql = [NSString stringWithFormat:
+                         @"CREATE TABLE if not exists `%@` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `timestamp` INTEGER NOT NULL);", [arr[i] first]];
+        if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE: error = %@", [db lastErrorMessage]);
+    }
+    [db close];
+}
+
+-(void)load_all_emote_records
+{
+    FMDatabase* db = [self get_db];
+    if (![db open])
+    {
+        NSLog(@"DEBUGMESSAGE: failed to open sqlite database");
+        return;
+    }
+    extern Trie* dict;
+    NSString* sql = @"SELECT `emoji` FROM `interval`;";
+    FMResultSet *s = [db executeQuery:sql];
+    NSMutableArray<NSString*>* arr = [NSMutableArray array];
+    while ([s next])
+    {
+        NSString* emote = [s stringForColumn:@"emoji"];
+        [arr addObject:emote];
+    }
+    [s close];
+    for (NSInteger i = 0; i < [arr count]; i++)
+    {
+        Record* r = [self get_record_helper:arr[i] output:-1.0];
+        NSString* nocolon = [arr[i] substringWithRange:NSMakeRange(1, [arr[i] length]-2)];
+        [dict update_record:nocolon record:r];
+        [r release];
+    }
+    [db close];
+}
+
+-(void)insert_new_entry:(Triplet*)entry candidates:(NSArray<Triplet*>*)potential
 {
     FMDatabase* db = [self get_db];
     if (![db open])
@@ -199,15 +286,15 @@
     if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE: error = %@", [db lastErrorMessage]);
     [db close];
     
-    bool did = false;
-    for (NSInteger i = 0; i < [potential count]; i++)
-    {
-        double res = [[potential[i] first] isEqualToString:[entry first]] ? 1.0 : 0.0;
-        Record* r = [self get_record:potential[i] output:res];
-        if (r != nil) did = true;
-        [self append_to_CSV:r];
-        [r release];
-    }
+//    bool did = false;
+//    for (NSInteger i = 0; i < [potential count]; i++)
+//    {
+//        double res = [[potential[i] first] isEqualToString:[entry first]] ? 1.0 : 0.0;
+//        Record* r = [self get_record:[potential[i] first] output:res];
+//        if ([r ave_int] >= 0) did = true;
+//        [self append_to_CSV:r];
+//        if (r != nil) [r release];
+//    }
     
     if (![db open])
     {
@@ -222,6 +309,12 @@
     
     if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE: error = %@", [db lastErrorMessage]);
     [db close];
+    
+    extern Trie* dict;
+    Record* r = [self get_record:[entry first] output:-1.0];
+    NSString* nocolon = [[entry first] substringWithRange:NSMakeRange(1, [[entry first] length]-2)];
+    [dict update_record:nocolon record:r];
+    [r release];
 //    if (did) [self train_model];
 }
 

@@ -479,7 +479,6 @@
 
 - (Matrix *)removeRow:(int)rowIndex
 {
-    
     NSAssert(rowIndex < self->rows, @"Index out of bounds");
     double newRows = rows - 1;
     double *newMatrix = malloc(columns * newRows * sizeof(double));

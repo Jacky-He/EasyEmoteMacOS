@@ -91,12 +91,14 @@
 {
     _starting = NO;
     extern IMKCandidates* candidates;
+    extern Preferences* preferences;
     NSMutableString* original = [self originalBuffer];
     NSMutableString* composed = [self composedBuffer];
-    
+
     if ([_curr_candidates count] > 0 && _doConvert)
     {
         [self setComposedBuffer:[_curr_candidates[0] second]];
+        [preferences insert_new_entry:_curr_candidates[0] candidates:_curr_candidates];
         [self commitComposition:sender];
     }
     else
@@ -110,6 +112,7 @@
 
 -(void)handle_number:(NSString*)trigger client:(id)sender
 {
+    extern Preferences* preferences;
     NSInteger val = [trigger intValue];
     if (val < 1 || val > 9) return;
     val--;
@@ -117,6 +120,7 @@
     if (0 <= target && target < [_curr_candidates count])
     {
         [self setComposedBuffer:[_curr_candidates[target] second]];
+        [preferences insert_new_entry:_curr_candidates[target] candidates:_curr_candidates];
         [self commitComposition:sender];
     }
 }
@@ -200,11 +204,13 @@
 -(void)update_curr_candidates
 {
     extern Trie* dict;
+    extern Preferences* preferences;
     if (_curr_candidates != nil) [_curr_candidates release];
-    _curr_candidates = [[dict subsequence_search:[self originalBuffer]] retain];
+    _curr_candidates = [[dict subsequence_search:[[self originalBuffer] substringFromIndex:1]] retain];
+    [preferences sort_based_on_history:_curr_candidates];
     if (_candidate_strings != nil) [_candidate_strings release];
     _candidate_strings = [[NSMutableArray alloc]init];
-    for (NSInteger i = 0; i < [_curr_candidates count]; i++) [_candidate_strings addObject:[[NSString alloc]initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]]];
+    for (NSInteger i = 0; i < [_curr_candidates count]; i++) [_candidate_strings addObject:[[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]]];
 }
 
 -(NSArray*)candidates:(id)sender
@@ -215,9 +221,13 @@
 
 -(void)candidateSelected:(NSAttributedString *)candidateString
 {
+    extern Preferences* preferences;
     NSString* tmp = [candidateString string];
-    NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" :"];
+    NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" "];
     [self setComposedBuffer:line[0]];
+    Pair* obj = [[Pair alloc]initialize:line[1] second:line[0]];
+    [preferences insert_new_entry:obj candidates:_curr_candidates];
+    [obj release];
     [self commitComposition:_currentClient];
 }
 

@@ -7,6 +7,7 @@
 #import <Cocoa/Cocoa.h>
 #import <InputMethodKit/InputMethodKit.h>
 #import "Trie.h"
+#import "Preferences.h"
 
 const NSString* kConnectionName = @"EasyEmote_Connection";
 
@@ -14,6 +15,7 @@ IMKServer* server;
 IMKCandidates* candidates = nil;
 Trie* dict;
 NSMutableDictionary* DUMMYDICT;
+Preferences* preferences;
 
 NSString* toUTF16(NSString* str)
 {
@@ -78,18 +80,25 @@ int main(int argc, char * argv[])
     {
         NSLog(@"DEBUGMESSAGE: Error getting contents of file");
     }
-//    [dict load_properties:[dict root]];
+    [dict load_properties:[dict root]];
 //    NSMutableArray<Pair*>* arr = [dict subsequence_search:@"ye"];
 //    for (NSInteger i = 0; i < [arr count]; i++)
 //    {
 //        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
 //    }
-//    NSLog(@"DEBUGMESSAGE: LOL2");
-    NSString* s = [[NSBundle mainBundle] resourcePath];
-    NSLog(@"DEBUGMESSAGE: %@", s);
-    [NSThread sleepForTimeInterval:10000000000];
-    
-//    [[NSApplication sharedApplication] run];
+    preferences = [[Preferences alloc] initialize];
+//    [preferences insert_new_entry:arr[10] candidates:arr];
+//    [preferences insert_new_entry:arr[10] candidates:arr];
+//    [preferences sort_based_on_history:arr];
+//    for (NSInteger i = 0; i < [arr count]; i++)
+//    {
+//        NSLog(@"%@ %@", [arr[i] first], [arr[i] second]);
+//    }
+
+    NSLog(@"DEBUGMESSAGE: LOL2");
+
+    [[NSApplication sharedApplication] run];
+    [preferences release];
     [DUMMYDICT release];
     [dict release];
     [server release];

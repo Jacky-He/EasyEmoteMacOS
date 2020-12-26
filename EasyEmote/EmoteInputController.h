@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #import <InputMethodKit/InputMethodKit.h>
-//#import <AppKit/AppKit.h>
 #import "Trie.h"
+#import "Preferences.h"
 
 const NSString* modeString = @"com.apple.inputmethod.emote";
 

@@ -1,9 +1,8 @@
-#import <Foundation/Foundation.h>
 #import <YCML/YCML.h>
-#import "CHCSVParser.h"
 #import <fmdb/FMDB.h>
 #import "Pair.h"
 #import "Record.h"
+#import "CHCSVParser.h"
 
 @interface Preferences : NSObject
 {

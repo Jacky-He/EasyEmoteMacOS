@@ -17,6 +17,7 @@
 -(void)insert_new_entry:(Triplet*)entry candidates:(NSArray<Triplet*>*)potential;
 -(void)load_all_tables:(NSMutableArray<Triplet*>*)arr;
 -(Record*)get_record:(NSString*)emote output:(double)res;
+-(void)train_model;
 -(void)load_all_emote_records;
 
 @end

@@ -32,6 +32,8 @@
 -(void)activateServer:(id)sender
 {
     _currentClient = sender;
+    extern Preferences* preferences;
+//    [preferences train_model];
 }
 
 -(void)deactivateServer:(id)sender
@@ -231,7 +233,6 @@
     [self commitComposition:_currentClient];
 }
 
-
 -(NSInteger)get_page_with_index:(NSInteger)candidateIdentifier // zero indexed
 {
     return candidateIdentifier/9;
@@ -239,11 +240,8 @@
 
 -(NSInteger)get_index:(id)candidateString // zero indexed
 {
-    NSLog(@"DEBUGMESSAGE: MARK3");
     NSString* s = candidateString;
-    NSLog(@"DEBUGMESSAGE: MARK4");
     NSArray<NSString*>* arr = _candidate_strings;
-    NSLog(@"DEBUGMESSAGE: MARK5");
     for (NSInteger i = 0; i < [arr count]; i++)
     {
         if ([arr[i] isEqualToString:s]) return i;

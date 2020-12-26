@@ -46,7 +46,6 @@
         curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
         idx++;
     }
-    NSLog(@"dfas");
     if (idx != [word length]) return;
     [curr set_record: r];
 }

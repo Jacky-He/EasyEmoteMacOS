@@ -26,29 +26,32 @@
 
 -(void)train_model
 {
+    Matrix* m = [self get_csv_data];
+    if (m == nil || [m columns] < 20) // only train if has enough data
+    {
+        [self set_prediction_model:nil];
+        return;
+    }
     NSLog(@"DEBUGMESSAGE: Training Model...");
     @autoreleasepool {
-        Matrix* m = [self get_csv_data];
-        if (m == nil)
-        {
-            [self set_prediction_model:nil];
-            return;
-        }
-        Matrix* input = [m removeRow:4];
-        Matrix* output = [m row:4];
-        YCELMTrainer* trainer = [YCELMTrainer trainer];
-        @try
-        {
-            YCFFN* model = (YCFFN* )[trainer train:nil inputMatrix:input outputMatrix:output];
-            [self set_prediction_model:model];
-        }
-        @catch (NSException* e)
-        {
-            NSLog(@"DEBUGMESSAGE: Error training model %@", [e description]);
-            [self set_prediction_model:nil];
-        }
+        dispatch_async(dispatch_queue_create("Train Model", nil), ^{
+            Matrix* input = [m removeRow:4];
+            Matrix* output = [m row:4];
+            YCELMTrainer* trainer = [YCELMTrainer trainer];
+            @try
+            {
+                YCFFN* model = (YCFFN* )[trainer train:nil inputMatrix:input outputMatrix:output];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self set_prediction_model:model];
+                    NSLog(@"DEBUGMESSAGE: Training Finished!");
+                });
+            }
+            @catch (NSException* e)
+            {
+                NSLog(@"DEBUGMESSAGE: Error training model %@", [e description]);
+            }
+        });
     }
-    NSLog(@"DEBUGMESSAGE: Training Finished!");
 }
 
 - (Matrix *)matrixWithCSVName:(NSString *)path
@@ -67,6 +70,7 @@
 -(Matrix*)get_csv_data
 {
     NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
+//    NSString* defaultpath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"default.csv"];
     NSFileManager* filemanager = [NSFileManager defaultManager];
     if ([filemanager fileExistsAtPath:path]) return [self matrixWithCSVName:path];
     else return nil;
@@ -79,7 +83,7 @@
     return _db;
 }
 
--(void)sort_based_on_history:(NSMutableArray<Triplet*>*)arr
+-(void)sort_without_model:(NSMutableArray<Triplet*>*)arr
 {
     [arr sortUsingComparator:^NSComparisonResult(id a, id b) {
         Record* r1 = [(Triplet*)a third];
@@ -114,8 +118,16 @@
         }
         return NSOrderedSame;
     }];
-//    YCFFN* model = [self get_prediction_model];
-//    if (model == nil) return;
+}
+
+-(void)sort_based_on_history:(NSMutableArray<Triplet*>*)arr
+{
+    YCFFN* model = [self get_prediction_model];
+    if (model == nil)
+    {
+        [self sort_without_model:arr];
+        return;
+    }
 //    NSMutableArray<Pair*>* doublepair = [[NSMutableArray alloc]init];
 //    NSInteger cnt = [arr count];
 //    for (NSInteger i = 0; i < cnt; i++)
@@ -206,7 +218,6 @@
 -(void)append_to_CSV:(Record*)r
 {
     if ([r ave_int] < 0 || r == nil) return;
-    NSLog(@"DEBUGMESSAGE: APPENDED");
     NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
     NSString* s = [NSString stringWithFormat:@"%d,%d,%d,%.f,%.f\n", [r total_select], [r mago_select], [r wago_select], [r ave_int], [r res]];
     NSFileManager* filemanager = [NSFileManager defaultManager];
@@ -286,15 +297,21 @@
     if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE: error = %@", [db lastErrorMessage]);
     [db close];
     
-//    bool did = false;
-//    for (NSInteger i = 0; i < [potential count]; i++)
-//    {
-//        double res = [[potential[i] first] isEqualToString:[entry first]] ? 1.0 : 0.0;
-//        Record* r = [self get_record:[potential[i] first] output:res];
-//        if ([r ave_int] >= 0) did = true;
-//        [self append_to_CSV:r];
-//        if (r != nil) [r release];
-//    }
+    bool did = false;
+    for (NSInteger i = 0; i < [potential count]; i++)
+    {
+        double res = [[potential[i] first] isEqualToString:[entry first]] ? 1.0 : 0.0;
+        Record* r = [potential[i] third];
+        if ([[potential[i] first] isEqualToString:@":purse:"])
+        {
+            NSLog(@"DEBUGMESSAGE: PURSE: %@", r);
+        }
+        if (r == nil) continue;
+        Record* tmp = [[Record alloc] initialize:res total_select:[r total_select] mago_select:[r mago_select] wago_select:[r wago_select] ave_int:[r ave_int]];
+        if ([tmp ave_int] >= 0) did = true;
+        [self append_to_CSV:tmp];
+        [tmp release];
+    }
     
     if (![db open])
     {
@@ -315,7 +332,6 @@
     NSString* nocolon = [[entry first] substringWithRange:NSMakeRange(1, [[entry first] length]-2)];
     [dict update_record:nocolon record:r];
     [r release];
-//    if (did) [self train_model];
 }
 
 -(void)dealloc

@@ -2,16 +2,12 @@
 #import "Pair.h"
 @implementation Pair
 
-
--(Pair*)initialize:(id)first second:(id)val2
++(instancetype)pair:(id)first second:(id)val2
 {
-    self = [super init];
-    if (self)
-    {
-        _first = [first retain];
-        _second = [val2 retain];
-    }
-    return self;
+    Pair* p = [[Pair alloc] init];
+    [p set_first:first];
+    [p set_second:val2];
+    return [p autorelease];
 }
 
 -(id)first
@@ -26,11 +22,15 @@
 
 -(void)set_first:(id)first
 {
+    [first retain];
+    [_first release];
     _first = first;
 }
 
 -(void)set_second:(id)second
 {
+    [second retain];
+    [_second release];
     _second = second;
 }
 

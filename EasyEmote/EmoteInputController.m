@@ -25,7 +25,7 @@
     else if (!s) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
     else if ([s intValue] == 0) [self originalBufferAppend:s client:sender];
     else [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
-//        [self handle_number:s client:sender];
+    //        [self handle_number:s client:sender];
     return true;
 }
 
@@ -46,6 +46,7 @@
 {
     NSString* text = [self composedBuffer];
     if (text == nil || [text length] == 0) text = [self originalBuffer];
+    NSLog(@"DEBUGMESSAGE: COMPOSEDBUFFER2: %@", [self composedBuffer]);
     [sender insertText:text replacementRange:NSMakeRange(NSNotFound, NSNotFound)];
     [self setComposedBuffer:@""];
     [self setOriginalBuffer:@""];
@@ -100,7 +101,13 @@
     if ([_curr_candidates count] > 0 && _doConvert)
     {
         [self setComposedBuffer:[_curr_candidates[0] second]];
-        [preferences insert_new_entry:_curr_candidates[0] candidates:_curr_candidates];
+        NSMutableArray<Triplet*>* t = [_curr_candidates retain];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            @autoreleasepool {
+                [preferences insert_new_entry:t[0] candidates:t];
+                [t release];
+            }
+        });
         [self commitComposition:sender];
     }
     else
@@ -122,8 +129,8 @@
     if (0 <= target && target < [_curr_candidates count])
     {
         [self setComposedBuffer:[_curr_candidates[target] second]];
-        [preferences insert_new_entry:_curr_candidates[target] candidates:_curr_candidates];
         [self commitComposition:sender];
+        [preferences insert_new_entry:_curr_candidates[target] candidates:_curr_candidates];
     }
 }
 
@@ -154,13 +161,11 @@
 
 -(void)candidateSelectionChanged:(NSAttributedString *)candidateString
 {
-    NSLog(@"DEBUGMESSAGE: Changed");
-    NSString* str = [candidateString string];
-    NSLog(@"DEBUGMESSAGE: MARK1");
-    _curr_index = [self get_index:str];
-    NSLog(@"DEBUGMESSAGE: MARK2");
-    _curr_page = [self get_page_with_index:_curr_index];
-    NSLog(@"DEBUGMESSAGE: curr_index: %ld, curr_page: %ld", _curr_index, _curr_page);
+    @autoreleasepool {
+        NSString* str = [candidateString string];
+        _curr_index = [self get_index:str];
+        _curr_page = [self get_page_with_index:_curr_index];
+    }
 }
 
 -(void)updateCandidatesWindow
@@ -176,11 +181,7 @@
     else
     {
         [candidates setPanelType:kIMKSingleColumnScrollingCandidatePanel];
-      
-//        [dict setValue:[NSNumber numberWithFloat:0.5] forKey:IMKCandidatesOpacityAttributeName];
-//        [candidates setAttributes:dict];
         //@assert that original buffer is not empty
-        NSLog(@"DEBUGMESSAGE: MARK");
         [self update_curr_candidates];
         if ([_curr_candidates count] == 0)
         {
@@ -194,9 +195,6 @@
         }
         else
         {
-            NSArray* dict = [candidates attributeKeys];
-            for (NSInteger i = 0; i < [dict count]; i++) NSLog(@"DEBUGMESSAGE: %@", dict[i]);
-//            [candidates updateCandidates];
             [candidates setCandidateData:_candidate_strings];
             [candidates show:kIMKLocateCandidatesBelowHint];
         }
@@ -207,12 +205,18 @@
 {
     extern Trie* dict;
     extern Preferences* preferences;
-    if (_curr_candidates != nil) [_curr_candidates release];
-    _curr_candidates = [[dict subsequence_search:[[self originalBuffer] substringFromIndex:1]] retain];
+    NSMutableArray<Triplet*>* new_can = [[dict subsequence_search:[[self originalBuffer] substringFromIndex:1]] retain];
+    [_curr_candidates release];
+    _curr_candidates = new_can;
     [preferences sort_based_on_history:_curr_candidates];
-    if (_candidate_strings != nil) [_candidate_strings release];
+    [_candidate_strings release];
     _candidate_strings = [[NSMutableArray alloc]init];
-    for (NSInteger i = 0; i < [_curr_candidates count]; i++) [_candidate_strings addObject:[[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]]];
+    for (NSInteger i = 0; i < [_curr_candidates count]; i++) \
+    {
+        NSString* obj = [[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]];
+        [_candidate_strings addObject:obj];
+        [obj release];
+    }
 }
 
 -(NSArray*)candidates:(id)sender
@@ -227,9 +231,14 @@
     NSString* tmp = [candidateString string];
     NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" "];
     [self setComposedBuffer:line[0]];
-    Triplet* obj = [[Triplet alloc]initialize:line[1] second:line[0] third:line[0]];
-    [preferences insert_new_entry:obj candidates:_curr_candidates];
-    [obj release];
+    NSMutableArray<Triplet*>* t = [_curr_candidates retain];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @autoreleasepool {
+            Triplet* obj = [Triplet triplet:line[1] second:line[0] third:line[0]];
+            [preferences insert_new_entry:obj candidates:t];
+            [t release];
+        }
+    });
     [self commitComposition:_currentClient];
 }
 
@@ -254,6 +263,7 @@
     [_originalBuffer release];
     [_composedBuffer release];
     [_curr_candidates release];
+    [_candidate_strings release];
     [super dealloc];
 }
 

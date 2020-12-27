@@ -12,9 +12,8 @@
     FMDatabase* _db;
 }
 
--(Preferences*)initialize;
--(void)sort_based_on_history:(NSArray<Triplet*>*)arr;
--(void)insert_new_entry:(Triplet*)entry candidates:(NSArray<Triplet*>*)potential;
+-(void)sort_based_on_history:(NSMutableArray<Triplet*>*)arr;
+-(void)insert_new_entry:(Triplet*)entry candidates:(NSMutableArray<Triplet*>*)potential;
 -(void)load_all_tables:(NSMutableArray<Triplet*>*)arr;
 -(Record*)get_record:(NSString*)emote output:(double)res;
 -(void)train_model;

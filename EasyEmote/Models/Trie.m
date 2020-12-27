@@ -12,7 +12,7 @@
 
 -(Node)root
 {
-    if (_root == nil) _root = [[TrieNode alloc]init];
+    if (_root == nil) _root = [[TrieNode alloc] init];
     return _root;
 }
 
@@ -20,34 +20,38 @@
 {
     if (word == nil) return;
     if ([self contains:word]) return;
-    _numlevels = MAX(_numlevels, [word length]+1);
-    Node curr = [self root];
-    [curr set_cnt:([curr get_cnt]+1)];
-    for (NSInteger i = 0; i < [word length]; i++)
-    {
-        [curr set_numlevels:MAX([curr get_numlevels], [word length]-i)];
-        NSString* c = [word substringWithRange:NSMakeRange(i, 1)];
-        [curr add: c];
-        curr = [curr children][c];
+    @autoreleasepool {
+        _numlevels = MAX(_numlevels, [word length]+1);
+        Node curr = [self root];
         [curr set_cnt:([curr get_cnt]+1)];
+        for (NSInteger i = 0; i < [word length]; i++)
+        {
+            [curr set_numlevels:MAX([curr get_numlevels], [word length]-i)];
+            NSString* c = [word substringWithRange:NSMakeRange(i, 1)];
+            [curr add: c];
+            curr = [curr children][c];
+            [curr set_cnt:([curr get_cnt]+1)];
+        }
+        [curr set_numlevels:MAX([curr get_numlevels], 0)]; //not counting root
+        [curr set_unicode_str:unicode];
+        [curr set_descr_str:[[@":" stringByAppendingString:word] stringByAppendingString:@":"]];
     }
-    [curr set_numlevels:MAX([curr get_numlevels], 0)]; //not counting root
-    [curr set_unicode_str:unicode];
-    [curr set_descr_str:[[@":" stringByAppendingString:word] stringByAppendingString:@":"]];
 }
 
 -(void)update_record:(NSString*)word record:(Record*)r
 {
     if (word == nil) return;
-    Node curr = [self root];
-    NSInteger idx = 0;
-    while (idx < [word length] && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
-    {
-        curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
-        idx++;
+    @autoreleasepool {
+        Node curr = [self root];
+        NSInteger idx = 0;
+        while (idx < [word length] && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
+        {
+            curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
+            idx++;
+        }
+        if (idx != [word length]) return;
+        [curr set_record: r];
     }
-    if (idx != [word length]) return;
-    [curr set_record: r];
 }
 
 -(Record*)get_record:(NSString*)word
@@ -55,10 +59,12 @@
     if (word == nil) return nil;
     Node curr = [self root];
     NSInteger idx = 0;
-    while (idx < [word length] && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
-    {
-        curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
-        idx++;
+    @autoreleasepool {
+        while (idx < [word length] && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
+        {
+            curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
+            idx++;
+        }
     }
     return idx == [word length] ? [curr get_record] : nil;
 }
@@ -68,10 +74,12 @@
     if (word == nil) return true;
     Node curr = [self root];
     NSInteger idx = 0;
-    while (idx < word.length && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
-    {
-        curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
-        idx++;
+    @autoreleasepool {
+        while (idx < word.length && [curr children][[word substringWithRange:NSMakeRange(idx, 1)]] != nil)
+        {
+            curr = [curr children][[word substringWithRange:NSMakeRange(idx, 1)]];
+            idx++;
+        }
     }
     return idx == [word length] && [curr get_unicode_str] != nil;
 }
@@ -81,55 +89,14 @@
     if (descr == nil) return nil;
     Node curr = [self root];
     NSInteger idx = 0;
-    while (idx < [descr length] && [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]] != nil)
-    {
-        curr = [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]];
-        idx++;
+    @autoreleasepool {
+        while (idx < [descr length] && [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]] != nil)
+        {
+            curr = [curr children][[descr substringWithRange:NSMakeRange(idx, 1)]];
+            idx++;
+        }
     }
     return idx == [descr length] ? [curr get_unicode_str] : nil;
-}
-
--(NSMutableArray<Triplet*>*)prefix_search:(NSString*)input
-{
-    NSMutableArray<Triplet*>* res = [NSMutableArray array];
-    if (input == nil) return res;
-    Node curr = [self root];
-    NSInteger idx = 0;
-    while (idx < [input length] && [curr children][[input substringWithRange:NSMakeRange(idx, 1)]] != nil)
-    {
-        curr = [curr children][[input substringWithRange:NSMakeRange(idx, 1)]];
-        idx++;
-    }
-    if (idx < [input length]) return res;
-    res = [self random_n:curr maxlength:80];
-    NSString* copy = [input substringToIndex:([input length]-1)];
-    for (NSInteger i = 0; i < [res count]; i++) [res[i] set_first:[copy stringByAppendingString:[res[i] first]]];
-    return res;
-}
-
--(NSMutableArray<Triplet*>*)random_n:(Node)node maxlength:(NSInteger)num
-{
-    NSMutableArray<Triplet*>* res = [NSMutableArray array];
-    NSInteger remain = num;
-    if ([node get_unicode_str] != nil)
-    {
-        remain--;
-        [res addObject:[[Triplet alloc] initialize:@"" second:[node get_unicode_str] third:[node get_record]]];
-    }
-    NSArray<Node>* children = [[node children] allValues];
-    for (NSInteger i = 0; i < [children count]; i++)
-    {
-        if (remain <= 0) break;
-        NSInteger sub = MIN(remain, [children[i] get_cnt]);
-        NSMutableArray<Triplet*>* temp = [self random_n:children[i] maxlength:(sub)];
-        [res addObjectsFromArray:temp];
-        remain -= sub;
-    }
-    for (int i = 0; i < [res count]; i++)
-    {
-        [res[i] set_first:[[node get_value] stringByAppendingString:[res[i] first]]];
-    }
-    return res;
 }
 
 -(void)load_properties:(Node)node
@@ -195,7 +162,13 @@
 -(void)dfs_get_emote:(Node)curr arr:(NSMutableArray<Triplet*>*)res
 {
     for (Node each in [[curr children] allValues]) [self dfs_get_emote:each arr:res];
-    if ([curr get_unicode_str] != nil) [res addObject:[[Triplet alloc]initialize:[curr get_descr_str] second:[curr get_unicode_str] third:[curr get_record]]];
+    if ([curr get_unicode_str] != nil)
+    {
+        @autoreleasepool {
+            Triplet* obj = [Triplet triplet:[curr get_descr_str] second:[curr get_unicode_str] third:[curr get_record]];
+            [res addObject:obj];
+        }
+    }
 }
 
 -(NSMutableArray<Triplet*>*)all_emotes_in_subtrees:(Node)curr
@@ -210,7 +183,7 @@
     extern NSMutableDictionary* DUMMYDICT;
     if ([sequence length] <= idx)
     {
-        [res addObjectsFromArray:[self all_emotes_in_subtrees:curr]];
+        [res addObjectsFromArray: [self all_emotes_in_subtrees:curr]];
         return;
     }
     NSMutableArray<NSMutableDictionary*>* first_occurrences = [curr get_first_occurrences];
@@ -237,16 +210,9 @@
     return res;
 }
 
--(void)dealloc_helper:(Node)node
-{
-    NSArray* adj = [[node children] allValues];
-    for (NSInteger i = 0; i < [adj count]; i++) [self dealloc_helper:adj[i]];
-    [node release];
-}
-
 -(void)dealloc
 {
-    [self dealloc_helper:[self root]];
+    [_root release];
     [super dealloc];
 }
 

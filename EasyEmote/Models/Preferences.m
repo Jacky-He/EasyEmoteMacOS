@@ -2,16 +2,6 @@
 
 @implementation Preferences
 
--(Preferences*)initialize
-{
-    self = [super init];
-    if (self)
-    {
-//        [self train_model];
-    }
-    return self;
-}
-
 -(YCFFN*)get_prediction_model
 {
     return _prediction_model;
@@ -19,9 +9,10 @@
 
 -(void)set_prediction_model:(YCFFN*)model
 {
-    if (_prediction_model != nil) [_prediction_model release];
     if (model == nil) return;
-    _prediction_model = [model retain];
+    [model retain];
+    [_prediction_model release];
+    _prediction_model = model;
 }
 
 -(void)train_model
@@ -35,20 +26,22 @@
     NSLog(@"DEBUGMESSAGE: Training Model...");
     @autoreleasepool {
         dispatch_async(dispatch_queue_create("Train Model", nil), ^{
-            Matrix* input = [m removeRow:4];
-            Matrix* output = [m row:4];
-            YCELMTrainer* trainer = [YCELMTrainer trainer];
-            @try
-            {
-                YCFFN* model = (YCFFN* )[trainer train:nil inputMatrix:input outputMatrix:output];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self set_prediction_model:model];
-                    NSLog(@"DEBUGMESSAGE: Training Finished!");
-                });
-            }
-            @catch (NSException* e)
-            {
-                NSLog(@"DEBUGMESSAGE: Error training model %@", [e description]);
+            @autoreleasepool {
+                Matrix* input = [m removeRow:4];
+                Matrix* output = [m row:4];
+                YCELMTrainer* trainer = [YCELMTrainer trainer];
+                @try
+                {
+                    YCFFN* model = (YCFFN* )[trainer train:nil inputMatrix:input outputMatrix:output];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self set_prediction_model:model];
+                        NSLog(@"DEBUGMESSAGE: Training Finished!");
+                    });
+                }
+                @catch (NSException* e)
+                {
+                    NSLog(@"DEBUGMESSAGE: Error training model %@", [e description]);
+                }
             }
         });
     }
@@ -56,14 +49,14 @@
 
 - (Matrix *)matrixWithCSVName:(NSString *)path
 {
-    NSString* fileContents = [[NSString alloc]initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    NSString* fileContents = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     NSMutableArray *arrays = [fileContents.CSVComponents mutableCopy];
     NSMutableArray *cols = [NSMutableArray array];
     for (NSArray *a in arrays)
     {
-        [cols addObject:[Matrix matrixFromNSArray:a rows:(int)(a.count) columns:1]];
+        [cols addObject: [Matrix matrixFromNSArray:a rows:(int)(a.count) columns:1]];
     }
-    [fileContents release];
+    [arrays release];
     return [Matrix matrixFromColumns:cols]; // Transpose to have one sample per column
 }
 
@@ -79,7 +72,7 @@
 -(FMDatabase*)get_db
 {
     NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"shistory.db"];
-    if (_db == nil) _db = [FMDatabase databaseWithPath:path];
+    if (_db == nil) _db = [[FMDatabase databaseWithPath:path] retain];
     return _db;
 }
 
@@ -212,24 +205,28 @@
         total_select = [s intForColumn:@"numselection"];
     }
     [s close];
-    return [[Record alloc] initialize:res total_select:total_select mago_select:mago_select wago_select:wago_select ave_int:ave_int];
+    return [Record record:res total_select:total_select mago_select:mago_select wago_select:wago_select ave_int:ave_int];
 }
 
 -(void)append_to_CSV:(Record*)r
 {
+    NSLog(@"DEBUGMESSAGE: 23DSFA");
     if ([r ave_int] < 0 || r == nil) return;
-    NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
-    NSString* s = [NSString stringWithFormat:@"%d,%d,%d,%.f,%.f\n", [r total_select], [r mago_select], [r wago_select], [r ave_int], [r res]];
-    NSFileManager* filemanager = [NSFileManager defaultManager];
-    if ([filemanager fileExistsAtPath:path])
-    {
-        NSFileHandle* fh = [NSFileHandle fileHandleForWritingAtPath:path];
-        [fh seekToEndOfFile];
-        NSData* data = [s dataUsingEncoding:NSUTF8StringEncoding];
-        [fh writeData:data];
-        [fh closeFile];
+    NSLog(@"DEBUGMESSAGE: 23DSFA");
+    @autoreleasepool {
+        NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
+        NSString* s = [NSString stringWithFormat:@"%d,%d,%d,%.3f,%.3f\n", [r total_select], [r mago_select], [r wago_select], [r ave_int], [r res]];
+        NSFileManager* filemanager = [NSFileManager defaultManager];
+        if ([filemanager fileExistsAtPath:path])
+        {
+            NSFileHandle* fh = [NSFileHandle fileHandleForWritingAtPath:path];
+            [fh seekToEndOfFile];
+            NSData* data = [s dataUsingEncoding:NSUTF8StringEncoding];
+            [fh writeData:data];
+            [fh closeFile];
+        }
+        else [filemanager createFileAtPath:path contents:[s dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
     }
-    else [filemanager createFileAtPath:path contents:[s dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
 }
 
 -(void)load_all_tables:(NSMutableArray<Triplet*>*)arr
@@ -274,12 +271,11 @@
         Record* r = [self get_record_helper:arr[i] output:-1.0];
         NSString* nocolon = [arr[i] substringWithRange:NSMakeRange(1, [arr[i] length]-2)];
         [dict update_record:nocolon record:r];
-        [r release];
     }
     [db close];
 }
 
--(void)insert_new_entry:(Triplet*)entry candidates:(NSArray<Triplet*>*)potential
+-(void)insert_new_entry:(Triplet*)entry candidates:(NSMutableArray<Triplet*>*)potential
 {
     FMDatabase* db = [self get_db];
     if (![db open])
@@ -297,20 +293,13 @@
     if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE: error = %@", [db lastErrorMessage]);
     [db close];
     
-    bool did = false;
     for (NSInteger i = 0; i < [potential count]; i++)
     {
         double res = [[potential[i] first] isEqualToString:[entry first]] ? 1.0 : 0.0;
         Record* r = [potential[i] third];
-        if ([[potential[i] first] isEqualToString:@":purse:"])
-        {
-            NSLog(@"DEBUGMESSAGE: PURSE: %@", r);
-        }
         if (r == nil) continue;
-        Record* tmp = [[Record alloc] initialize:res total_select:[r total_select] mago_select:[r mago_select] wago_select:[r wago_select] ave_int:[r ave_int]];
-        if ([tmp ave_int] >= 0) did = true;
+        Record* tmp = [Record record:res total_select:[r total_select] mago_select:[r mago_select] wago_select:[r wago_select] ave_int:[r ave_int]];
         [self append_to_CSV:tmp];
-        [tmp release];
     }
     
     if (![db open])
@@ -331,7 +320,6 @@
     Record* r = [self get_record:[entry first] output:-1.0];
     NSString* nocolon = [[entry first] substringWithRange:NSMakeRange(1, [[entry first] length]-2)];
     [dict update_record:nocolon record:r];
-    [r release];
 }
 
 -(void)dealloc

@@ -2,16 +2,13 @@
 @implementation Triplet
 
 
--(Triplet*)initialize:(id)first second:(id)val2 third:(id)val3
++(instancetype)triplet:(id)first second:(id)val2 third:(id)val3
 {
-    self = [super init];
-    if (self)
-    {
-        _first = [first retain];
-        _second = [val2 retain];
-        _third = [val3 retain];
-    }
-    return self;
+    Triplet* t = [[Triplet alloc] init];
+    [t set_first:first];
+    [t set_second:val2];
+    [t set_third:val3];
+    return [t autorelease];
 }
 
 -(id)first
@@ -31,16 +28,22 @@
 
 -(void)set_first:(id)first
 {
+    [first retain];
+    [_first release];
     _first = first;
 }
 
 -(void)set_second:(id)second
 {
+    [second retain];
+    [_second release];
     _second = second;
 }
 
 -(void)set_third:(id)third
 {
+    [third retain];
+    [_third release];
     _third = third;
 }
 

@@ -16,10 +16,11 @@
     Record* _record;
 }
 
--(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent;
++(instancetype)trienode:(NSString*)value parent:(TrieNode*)parent;
 -(void)add:(NSString*)child;
 -(NSMutableDictionary*)children;
 -(void)set_unicode_str:(NSString*)str;
+-(void)set_parent:(TrieNode*)t;
 -(NSString*)get_unicode_str;
 -(NSInteger)get_cnt;
 -(NSString*)get_descr_str;

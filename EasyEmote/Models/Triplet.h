@@ -6,7 +6,7 @@
     id _third;
 }
 
--(Triplet*)initialize:(id)first second:(id)val2 third:(id)val3;
++(instancetype)triplet:(id)first second:(id)val2 third:(id)val3;
 -(id)first;
 -(id)second;
 -(id)third;

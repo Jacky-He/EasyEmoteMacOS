@@ -10,25 +10,30 @@
 
 @implementation TrieNode
 
--(TrieNode*)initialize:(NSString*)value parent:(TrieNode*)parent
++(instancetype)trienode:(NSString*)value parent:(TrieNode*)parent
 {
-    self = [super init];
-    if (self)
-    {
-        _value = [value retain];
-        _parent = parent;
-        _cnt = 0;
-    }
-    return self;
+    TrieNode* t = [[TrieNode alloc] init];
+    [t set_value: value];
+    [t set_parent:parent];
+    [t set_cnt:0];
+    return [t autorelease];
+}
+
+-(void)set_value:(NSString*)s
+{
+    [s retain];
+    [_value release];
+    _value = s;
 }
 
 -(void)add:(NSString*)child
 {
     NSMutableDictionary* children = [self children];
     if ([children objectForKey:child] != nil) return;
-    TrieNode* newnode = [[TrieNode alloc]initialize:child parent:self];
-    [children setObject: newnode forKey:child];
-    [newnode release];
+    @autoreleasepool {
+        TrieNode* newnode = [TrieNode trienode:child parent:self];
+        [children setObject: newnode forKey:child];
+    }
 }
 
 -(NSMutableDictionary*)children
@@ -97,8 +102,9 @@
 
 -(void)set_next_in_level:(TrieNode *)node
 {
-    if (_next_in_level != nil) [_next_in_level release];
-    _next_in_level = [node retain];
+    [node retain];
+    [_next_in_level release];
+    _next_in_level = node;
 }
 
 -(TrieNode*)get_next_in_level
@@ -108,8 +114,9 @@
 
 -(void)set_unicode_str:(NSString*)str
 {
-    if (_unicodestr != nil) [_unicodestr release];
-    _unicodestr = [str retain];
+    [str retain];
+    [_unicodestr release];
+    _unicodestr = str;
 }
 
 -(NSString*)get_unicode_str
@@ -119,14 +126,16 @@
 
 -(void)set_descr_str:(NSString *)str
 {
-    if (_descrstr != nil) [_descrstr release];
-    _descrstr = [str retain];
+    [str retain];
+    [_descrstr release];
+    _descrstr = str;
 }
 
 -(void)set_record:(Record*)r
 {
-    if (_record != nil) [_record release];
-    _record = [r retain];
+    [r retain];
+    [_record release];
+    _record = r;
 }
 
 -(Record*)get_record
@@ -152,6 +161,11 @@
 -(NSString*)get_value
 {
     return _value;
+}
+
+-(void)set_parent:(TrieNode*)t
+{
+    _parent = t;
 }
 
 -(void)dealloc

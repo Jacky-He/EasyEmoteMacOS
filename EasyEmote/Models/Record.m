@@ -2,23 +2,45 @@
 
 @implementation Record
 
--(Record*)initialize:(double)res total_select:(int)ts mago_select:(int)ms wago_select:(int)ws ave_int:(double)ai
++(instancetype) record:(double)res total_select:(int)ts mago_select:(int)ms wago_select:(int)ws ave_int:(double)ai
 {
-    self = [super init];
-    if (self)
-    {
-        _res = res;
-        _total_select = ts;
-        _mago_select = ms;
-        _wago_select = ws;
-        _ave_int = ai;
-    }
-    return self;
+    Record* r = [[Record alloc] init];
+    [r set_res:res];
+    [r set_ts:ts];
+    [r set_ms:ms];
+    [r set_ws:ws];
+    [r set_ai:ai];
+    return [r autorelease];
 }
 
 -(int)total_select
 {
     return _total_select;
+}
+
+-(void)set_ts:(int)ts
+{
+    _total_select = ts;
+}
+
+-(void)set_ms:(int)ms
+{
+    _mago_select = ms;
+}
+
+-(void)set_ws:(int)ws
+{
+    _wago_select = ws;
+}
+
+-(void)set_ai:(double)ai
+{
+    _ave_int = ai;
+}
+
+-(void)set_res:(double)res
+{
+    _res = res;
 }
 
 -(int)mago_select

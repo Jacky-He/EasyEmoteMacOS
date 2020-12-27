@@ -5,7 +5,7 @@
     id _second;
 }
 
--(Pair*)initialize:(id)first second:(id)val2;
++(instancetype)pair:(id)first second:(id)val2;
 -(id)first;
 -(id)second;
 -(void)set_first:(id)first;

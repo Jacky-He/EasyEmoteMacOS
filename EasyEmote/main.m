@@ -49,49 +49,59 @@ NSString* toUTF16Sequence(NSString* str)
 
 int main(int argc, char * argv[])
 {
-    NSLog(@"DEBUGMESSAGE: LOL1");
-    
-    NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
-        
-    server = [[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier];
-    candidates = [[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain];
-   
-    DUMMYDICT = [[NSMutableDictionary alloc]init];
-    //load emojis
-    dict = [[Trie alloc] init];
-    NSURL* url = [[NSBundle mainBundle] URLForResource:@"emojiStore" withExtension:@"txt"];
-    @try
-    {
-        NSString* inputString = [[NSString alloc] initWithContentsOfURL: url encoding:NSUTF8StringEncoding error:nil];
-        NSArray<NSString*>* lines = [inputString componentsSeparatedByString:@"\n"];
-        [inputString release];
-        for (NSInteger i = 0; i < [lines count]; i++)
-        {
-            NSString* str = lines[i];
-            if (![str containsString:@":"]) continue;
-            NSArray<NSString*>* parts = [str componentsSeparatedByString:@":"];
-            NSString* codestr = [parts[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            NSString* descr = [parts[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            NSString* unicodestr = toUTF16Sequence(codestr);
-            [dict insert:[descr lowercaseString] unicodestr:unicodestr];
+    @autoreleasepool {
+        NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
+            
+        server = [[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier];
+        candidates = [[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain];
+        DUMMYDICT = [[NSMutableDictionary alloc]init];
+        //load emojis
+        dict = [[Trie alloc] init];
+        @autoreleasepool {
+            NSURL* url = [[NSBundle mainBundle] URLForResource:@"emojiStore" withExtension:@"txt"];
+            @try
+            {
+                NSString* inputString = [[NSString alloc] initWithContentsOfURL: url encoding:NSUTF8StringEncoding error: nil];
+                NSArray<NSString*>* lines = [inputString componentsSeparatedByString:@"\n"];
+                [inputString release];
+                for (NSInteger i = 0; i < [lines count]; i++)
+                {
+                    @autoreleasepool {
+                        NSString* str = lines[i];
+                        if (![str containsString:@":"]) continue;
+                        NSArray<NSString*>* parts = [str componentsSeparatedByString:@":"];
+                        NSString* codestr = [parts[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                        NSString* descr = [parts[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                        NSString* unicodestr = toUTF16Sequence(codestr);
+                        [dict insert:[descr lowercaseString] unicodestr:unicodestr];
+                    }
+                }
+            }
+            @catch (NSException* exception)
+            {
+                NSLog(@"DEBUGMESSAGE: Error getting contents of file");
+            }
         }
+        
+        @autoreleasepool {
+            [dict load_properties:[dict root]];
+            preferences = [[Preferences alloc] init];
+            NSMutableArray<Triplet*>* allemotes = [dict subsequence_search:@""];
+            [preferences load_all_tables:allemotes];
+            [preferences load_all_emote_records];
+            [preferences train_model];
+        }
+        
+        NSLog(@"DEBUGMESSAGE: Application running");
+        [[NSApplication sharedApplication] run];
+        
+        [preferences release];
+        [DUMMYDICT release];
+        [dict release];
+        [server release];
+        [candidates release];
     }
-    @catch (NSException* exception)
-    {
-        NSLog(@"DEBUGMESSAGE: Error getting contents of file");
-    }
-    [dict load_properties:[dict root]];
-    preferences = [[Preferences alloc] initialize];
-    NSMutableArray<Triplet*>* allemotes = [dict subsequence_search:@""];
-    [preferences load_all_tables:allemotes];
-    [preferences load_all_emote_records];
-    NSLog(@"DEBUGMESSAGE: LOL2");
-    
-    [[NSApplication sharedApplication] run];
-    [preferences release];
-    [DUMMYDICT release];
-    [dict release];
-    [server release];
-    [candidates release];
     return 0;
 }
+
+

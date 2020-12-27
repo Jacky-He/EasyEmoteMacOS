@@ -9,7 +9,7 @@
     double _ave_int;
 }
 
--(Record*)initialize:(double)res total_select:(int)ts mago_select:(int)ms wago_select:(int)ws ave_int:(double)ai;
++(instancetype) record:(double)res total_select:(int)ts mago_select:(int)ms wago_select:(int)ws ave_int:(double)ai;
 -(int)total_select;
 -(int)mago_select;
 -(int)wago_select;

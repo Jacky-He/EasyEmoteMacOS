@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>TISIntendedLanguage</key>
+	<string>en</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
@@ -32,8 +34,6 @@
 				<true/>
 				<key>tsInputModeIsVisibleKey</key>
 				<true/>
-				<key>tsInputModeKeyEquivalentKey</key>
-				<string>D</string>
 				<key>tsInputModeMenuIconFileKey</key>
 				<string>apple.tiff</string>
 				<key>tsInputModePaletteIconFileKey</key>

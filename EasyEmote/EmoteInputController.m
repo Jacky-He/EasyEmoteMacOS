@@ -34,12 +34,14 @@
     _currentClient = sender;
     extern Preferences* preferences;
 //    [preferences train_model];
+    NSLog(@"DEBUGMESSAGE: Server activated :)");
 }
 
 -(void)deactivateServer:(id)sender
 {
     extern IMKCandidates* candidates;
     [candidates hide];
+    NSLog(@"DEBUGMESSAGE: Server deactivated :(");
 }
 
 -(void)commitComposition:(id)sender

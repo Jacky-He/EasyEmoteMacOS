@@ -59,8 +59,6 @@
 		8A6AC9E82596732B00762532 /* Record.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Record.m; sourceTree = "<group>"; };
 		8A6ACA4425970E9600762532 /* Triplet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Triplet.m; sourceTree = "<group>"; };
 		8A6ACA4625970E9F00762532 /* Triplet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Triplet.h; sourceTree = "<group>"; };
-		8A6ACA6B2599657700762532 /* ref.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ref.plist; sourceTree = "<group>"; };
-		8A6ACA6C259969F100762532 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		8AB8BBC525915575008FA061 /* apple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = apple.tiff; sourceTree = "<group>"; };
 		8AB8BBC925915633008FA061 /* EmoteInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmoteInputController.h; sourceTree = "<group>"; };
 		8AB8BBCA2591563B008FA061 /* EmoteInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmoteInputController.m; sourceTree = "<group>"; };
@@ -159,8 +157,6 @@
 			children = (
 				E93396E20A9A0AAD0073E6C4 /* images */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				8A6ACA6C259969F100762532 /* InfoPlist.strings */,
-				8A6ACA6B2599657700762532 /* ref.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

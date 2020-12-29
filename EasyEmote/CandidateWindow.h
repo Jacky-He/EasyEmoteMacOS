@@ -1,12 +1,19 @@
-//
-//  CandidateWindow.h
-//  EasyEmote
-//
-//  Created by Jacky He on 2020-12-23.
-//
+#import <Cocoa/Cocoa.h>
+#import <InputMethodKit/InputMethodKit.h>
+#import <AppKit/AppKit.h>
 
-#ifndef CandidateWindow_h
-#define CandidateWindow_h
+@interface CandidateWindow : NSWindow
+{
+    IMKInputController* _controller; //weak
+    
+}
 
++(instancetype)window;
+//-(void)show;
+//-(void)hide;
+//-(bool)isVisible;
+-(void)setCandidates:(NSArray<NSAttributedString*>*)arr;
+-(void)interpretKeyEvents:(NSArray<NSEvent *>*)eventArray;
+-(void)setInputController:(IMKInputController*)controller;
 
-#endif /* CandidateWindow_h */
+@end

@@ -8,6 +8,7 @@
 #import <InputMethodKit/InputMethodKit.h>
 #import "Trie.h"
 #import "Preferences.h"
+#import "AppDelegate.h"
 
 const NSString* kConnectionName = @"EasyEmote_Connection";
 
@@ -47,16 +48,16 @@ NSString* toUTF16Sequence(NSString* str)
     return res;
 }
 
-int main(int argc, char * argv[])
+int main(int argc, const char * argv[])
 {
     @autoreleasepool {
         NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
             
-        server = [[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier];
-        candidates = [[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain];
-        DUMMYDICT = [[NSMutableDictionary alloc]init];
+        server = [[[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier] autorelease];
+        candidates = [[[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain] autorelease];
+        DUMMYDICT = [[[NSMutableDictionary alloc]init] autorelease];
         //load emojis
-        dict = [[Trie alloc] init];
+        dict = [[[Trie alloc] init] autorelease];
         @autoreleasepool {
             NSURL* url = [[NSBundle mainBundle] URLForResource:@"emojiStore" withExtension:@"txt"];
             @try
@@ -83,24 +84,20 @@ int main(int argc, char * argv[])
             }
         }
         
+        preferences = [[[Preferences alloc] init] autorelease];
+        
         @autoreleasepool {
             [dict load_properties:[dict root]];
-            preferences = [[Preferences alloc] init];
             NSMutableArray<Triplet*>* allemotes = [dict subsequence_search:@""];
             [preferences load_all_tables:allemotes];
             [preferences load_all_emote_records];
             [preferences train_model];
         }
-        
         NSLog(@"DEBUGMESSAGE: Application running");
+        [[NSApplication sharedApplication] setDelegate: [[[AppDelegate alloc]init] autorelease]];
         [[NSApplication sharedApplication] run];
-        
-        [preferences release];
-        [DUMMYDICT release];
-        [dict release];
-        [server release];
-        [candidates release];
     }
+//    return NSApplicationMain(argc, argv);
     return 0;
 }
 

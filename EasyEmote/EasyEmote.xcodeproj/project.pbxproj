@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A53D8D7259AB41000E659AA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A53D8D6259AB41000E659AA /* AppDelegate.m */; };
 		8A6AC9702594EFCC00762532 /* libPods-EasyEmote.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC96F2594EFCC00762532 /* libPods-EasyEmote.a */; };
 		8A6AC97625951A2C00762532 /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6AC97525951A2C00762532 /* Preferences.m */; };
 		8A6AC9E32595A5E600762532 /* YCMatrix.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6AC9942595234700762532 /* YCMatrix.framework */; };
@@ -50,6 +51,8 @@
 		434A8A82F491A9E77BCE7921 /* libPods-EasyEmote.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyEmote.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E73A7EE0F25249BDE4B796A /* Pods-EasyEmote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyEmote.release.xcconfig"; path = "Target Support Files/Pods-EasyEmote/Pods-EasyEmote.release.xcconfig"; sourceTree = "<group>"; };
 		8A43797A2594EB4500E5B04A /* libFMDB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFMDB.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A53D8D6259AB41000E659AA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8A53D8D8259AB42300E659AA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8A6AC96F2594EFCC00762532 /* libPods-EasyEmote.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-EasyEmote.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A6AC97525951A2C00762532 /* Preferences.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
 		8A6AC97825951A3800762532 /* Preferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
@@ -60,6 +63,10 @@
 		8A6ACA4425970E9600762532 /* Triplet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Triplet.m; sourceTree = "<group>"; };
 		8A6ACA4625970E9F00762532 /* Triplet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Triplet.h; sourceTree = "<group>"; };
 		8A6ACA6D25996EEE00762532 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		8A7DD3D4259AC8AD0071A4FB /* CandidateTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CandidateTableView.h; sourceTree = "<group>"; };
+		8A7DD3D5259AC8BE0071A4FB /* CandidateTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CandidateTableView.m; sourceTree = "<group>"; };
+		8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CandidateTableCell.m; sourceTree = "<group>"; };
+		8A7DD3D7259AC8D10071A4FB /* CandidateTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CandidateTableCell.h; sourceTree = "<group>"; };
 		8AB8BBC525915575008FA061 /* apple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = apple.tiff; sourceTree = "<group>"; };
 		8AB8BBC925915633008FA061 /* EmoteInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmoteInputController.h; sourceTree = "<group>"; };
 		8AB8BBCA2591563B008FA061 /* EmoteInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmoteInputController.m; sourceTree = "<group>"; };
@@ -149,6 +156,8 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* EasyEmote_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				8A53D8D6259AB41000E659AA /* AppDelegate.m */,
+				8A53D8D8259AB42300E659AA /* AppDelegate.h */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -202,6 +211,10 @@
 			children = (
 				8AF18D912593CF0F0071A8A7 /* CandidateWindow.h */,
 				8AF18D922593CF1A0071A8A7 /* CandidateWindow.m */,
+				8A7DD3D4259AC8AD0071A4FB /* CandidateTableView.h */,
+				8A7DD3D5259AC8BE0071A4FB /* CandidateTableView.m */,
+				8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */,
+				8A7DD3D7259AC8D10071A4FB /* CandidateTableCell.h */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -325,6 +338,7 @@
 				8A6AC9E92596748A00762532 /* Record.m in Sources */,
 				8AF18D772591990C0071A8A7 /* Trie.m in Sources */,
 				8A6AC97625951A2C00762532 /* Preferences.m in Sources */,
+				8A53D8D7259AB41000E659AA /* AppDelegate.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				8A6ACA4525970E9600762532 /* Triplet.m in Sources */,
 				8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */,

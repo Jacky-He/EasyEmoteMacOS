@@ -201,6 +201,11 @@
     }
 }
 
+-(id)get_curr_client
+{
+    return _currentClient;
+}
+
 -(void)update_curr_candidates
 {
     extern Trie* dict;

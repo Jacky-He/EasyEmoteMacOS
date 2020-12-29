@@ -54,7 +54,7 @@
 	<key>InputMethodServerControllerClass</key>
 	<string>EmoteInputController</string>
 	<key>LSBackgroundOnly</key>
-	<string>1</string>
+	<string>YES</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>tsInputMethodCharacterRepertoireKey</key>

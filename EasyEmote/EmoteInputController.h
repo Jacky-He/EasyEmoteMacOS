@@ -19,6 +19,7 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
     NSMutableArray<NSString*>* _candidate_strings;
 }
 
+-(id)get_curr_client;
 -(NSMutableString*)composedBuffer;
 -(void)setComposedBuffer:(NSString*)string;
 -(NSMutableString*)originalBuffer;

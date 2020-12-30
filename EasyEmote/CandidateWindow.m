@@ -262,19 +262,3 @@
 }
 
 @end
-
-@implementation CandidateWindowContainer
-
--(void)drawRect:(NSRect)dirtyRect
-{
-    NSRect rect = self.bounds;
-    [[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9] setStroke];
-    [[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9] setFill];
-    NSRectFill(dirtyRect);
-    [super drawRect:dirtyRect];
-//    NSBezierPath* path = [NSBezierPath bezierPathWithRoundedRect:rect xRadius:6 yRadius:6];
-//    [path fill];
-//    [path stroke];
-}
-
-@end

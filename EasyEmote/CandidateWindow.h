@@ -3,10 +3,6 @@
 #import <AppKit/AppKit.h>
 #import "CandidateTableView.h"
 
-@interface CandidateWindowContainer:NSView
-
-@end
-
 @interface CandidateWindow : NSWindow <NSTableViewDataSource, NSTableViewDelegate>
 {
     IMKInputController* _controller; //weak

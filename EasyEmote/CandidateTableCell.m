@@ -50,6 +50,7 @@
         [_text_label setAlignment:NSTextAlignmentLeft];
         [_text_label setTextColor:[NSColor blackColor]];
         [_text_label setBackgroundColor:[NSColor clearColor]];
+        [_text_label setMaximumNumberOfLines:1];
         [_text_label setTranslatesAutoresizingMaskIntoConstraints:NO];
     }
     return _text_label;
@@ -61,6 +62,11 @@
     [text_label setAttributedStringValue:text];
 }
 
+-(CGFloat)get_desired_width
+{
+    return 18 + _text_label.intrinsicContentSize.width + 10;
+}
+
 -(void)update_label:(NSUInteger)num
 {
     NSTextField* num_label = [self get_num_label];
@@ -70,6 +76,7 @@
 
 -(void)dealloc
 {
+    [_num_label release];
     [_text_label release];
     [super dealloc];
 }

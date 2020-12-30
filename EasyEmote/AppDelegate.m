@@ -22,7 +22,7 @@
 //    NSMutableArray<Triplet*>* res = [dict subsequence_search:@"ye"];
 //    for (NSInteger i = 0; i < [res count]; i++)
 //    {
-//        NSLog(@"DEBUGMESSAGE: %@ %@", [res[i] first], [res[i] second]);
+////        NSLog(@"DEBUGMESSAGE: %@ %@", [res[i] first], [res[i] second]);
 //        NSString* s = [[[res[i] second] stringByAppendingString:@" "] stringByAppendingString:[res[i] first]];
 //        NSFont* font = [NSFont fontWithName:@"Chalkboard" size:15];
 //        NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
@@ -41,3 +41,4 @@
 }
 
 @end
+

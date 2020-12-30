@@ -7,14 +7,23 @@
     CandidateWindow* res = [CandidateWindow new];
     [res setStyleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskFullSizeContentView|NSWindowStyleMaskResizable];
     [res setBackingType:NSBackingStoreBuffered];
-    [res setBackgroundColor: [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9]];
+    [res setBackgroundColor: [NSColor clearColor]];
     NSScrollView* scrollview = [res get_scroll_view];
     CandidateTableView* tableview = [res get_table_view];
-    [scrollview setDocumentView:tableview];
+    NSView* container = [res get_container_view];
+
+    [container addSubview:scrollview];
+    [scrollview setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [scrollview.topAnchor constraintEqualToAnchor:container.topAnchor].active = YES;
+    [scrollview.bottomAnchor constraintEqualToAnchor:container.bottomAnchor].active = YES;
+    [scrollview.leadingAnchor constraintEqualToAnchor:container.leadingAnchor].active = YES;
+    [scrollview.trailingAnchor constraintEqualToAnchor:container.trailingAnchor].active = YES;
+    
+    [scrollview setDocumentView: tableview];
     [[scrollview contentView] setPostsBoundsChangedNotifications:YES];
     [[NSNotificationCenter defaultCenter] addObserver:res selector:@selector(boundsDidChange:) name:NSViewBoundsDidChangeNotification object:[scrollview contentView]];
     
-    [res setContentView:scrollview];
+    [res setContentView:container];
     [res setLevel:CGShieldingWindowLevel()+1];
     [res makeKeyAndOrderFront:NSApp];
     return res;
@@ -34,13 +43,21 @@
     {
         CandidateTableView* tableview = [self get_table_view];
         NSInteger curr = [tableview selectedRow];
-        if (0 <= curr + 1 && curr + 1 < [_candidates count]) [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr+1] byExtendingSelection:NO];
+        if (0 <= curr + 1 && curr + 1 < [_candidates count])
+        {
+            [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr+1] byExtendingSelection:NO];
+            [tableview scrollRowToVisible:curr+1];
+        }
     }
     else if (keycode == 126) //arrow up
     {
         CandidateTableView* tableview = [self get_table_view];
         NSInteger curr = [tableview selectedRow];
-        if (0 <= curr - 1 && curr - 1 < [_candidates count]) [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr-1] byExtendingSelection:NO];
+        if (0 <= curr - 1 && curr - 1 < [_candidates count])
+        {
+            [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr-1] byExtendingSelection:NO];
+            [tableview scrollRowToVisible:curr-1];
+        }
     }
     else if (s && [s intValue] != 0) //numbers
     {
@@ -75,11 +92,22 @@
         [_table_view setBackgroundColor:[NSColor clearColor]];
         [_table_view setTarget:self];
         [_table_view setDoubleAction:@selector(doubleClicked:)];
-        
         NSTableColumn* col = [[[NSTableColumn alloc]initWithIdentifier:@"emotes"] autorelease];
         [_table_view addTableColumn:col];
     }
     return _table_view;
+}
+
+-(NSView*)get_container_view
+{
+    if (_container_view == nil)
+    {
+        _container_view = [[NSView new] retain];
+        [_container_view setWantsLayer:YES];
+        [_container_view.layer setBackgroundColor:[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9].CGColor];
+        [_container_view.layer setCornerRadius:6.0];
+    }
+    return _container_view;
 }
 
 -(NSScrollView*)get_scroll_view
@@ -112,10 +140,14 @@
     for (NSInteger i = 0; i < MIN(9, [_candidates count]); i++) [_key_selection_candidates setObject:[_candidates objectAtIndex:i] atIndexedSubscript:i];
     
     CandidateTableView* tableview = [self get_table_view];
+    
+    //resize window
     [tableview reloadData];
     CGSize maxsize = tableview.frame.size;
-    maxsize.height = MIN(tableview.frame.size.height, 100.0);
+    maxsize.height = MIN(tableview.frame.size.height, 300.0);
+    maxsize.width = [self get_tightest_width_of_rows:NSMakeRange(0, 10)];
     [self setContentSize: maxsize];
+    
     if ([_candidates count] > 0) [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 }
 
@@ -144,7 +176,7 @@
     NSScrollView* scroll = [self get_scroll_view];
     CGPoint p = scroll.contentView.bounds.origin;
     NSInteger inc = (fabs(p.y) < rows.location*25.0 + 12.5) ? 0 : 1;
-    if (rows.location + inc <= row && row < rows.location + inc + rows.length)
+    if (rows.location + inc <= row && row < rows.location + rows.length)
     {
         NSInteger tar = row - rows.location - inc + 1;
         [cell update_label:tar];
@@ -153,6 +185,8 @@
     else [cell update_label:-1];
     return cell;
 }
+
+//-(CGFloat)tableView:(NSTableView *)tableView sizeToFitWidthOfColumn:(NSInteger)column
 
 -(CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
 {
@@ -175,6 +209,40 @@
     NSRect rect = [tableview visibleRect];
     NSRange rows = [tableview rowsInRect:rect];
     [tableview reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:rows] columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+    CGSize maxsize = tableview.frame.size;
+    maxsize.height = MIN(tableview.frame.size.height, 300.0);
+    maxsize.width = [self get_tightest_width_of_rows:rows];
+    [self setContentSize: maxsize];
+}
+
+-(CGFloat)get_width_of_row_with_str:(NSAttributedString*)str
+{
+    CGFloat res = 35;
+    @autoreleasepool {
+        NSTextField* temp = [NSTextField new];
+        [temp setMaximumNumberOfLines:1];
+        [temp setBezeled:NO];
+        [temp setDrawsBackground:NO];
+        [temp setEditable:NO];
+        [temp setSelectable:NO];
+        [temp setAlignment:NSTextAlignmentLeft];
+        [temp setTextColor:[NSColor blackColor]];
+        [temp setBackgroundColor:[NSColor clearColor]];
+        [temp setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [temp setAttributedStringValue:str];
+        res += temp.intrinsicContentSize.width;
+    }
+    return res;
+}
+
+-(CGFloat)get_tightest_width_of_rows:(NSRange)rows
+{
+    CGFloat res = 0.0;
+    for (NSInteger i = rows.location; i < MIN([_candidates count], rows.location + rows.length); i++)
+    {
+        res = MAX(res, [self get_width_of_row_with_str:_candidates[i]]);
+    }
+    return res;
 }
 
 -(void)doubleClicked:(id)sender
@@ -189,12 +257,24 @@
     [_scroll_view release];
     [_table_view release];
     [_candidates release];
+    [_container_view release];
     [super dealloc];
 }
 
 @end
 
+@implementation CandidateWindowContainer
 
-//NSRect rect = [tableView visibleRect];
-//NSRange rows = [tableView rowsInRect:rect];
-//NSInteger firstVisibleRowIndex = rows.location;
+-(void)drawRect:(NSRect)dirtyRect
+{
+    NSRect rect = self.bounds;
+    [[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9] setStroke];
+    [[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9] setFill];
+    NSRectFill(dirtyRect);
+    [super drawRect:dirtyRect];
+//    NSBezierPath* path = [NSBezierPath bezierPathWithRoundedRect:rect xRadius:6 yRadius:6];
+//    [path fill];
+//    [path stroke];
+}
+
+@end

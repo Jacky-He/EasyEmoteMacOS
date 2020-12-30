@@ -10,5 +10,6 @@
 +(instancetype)cell;
 -(void)set_text:(NSAttributedString*)text;
 -(void)update_label:(NSUInteger)num;
+-(CGFloat)get_desired_width;
 
 @end

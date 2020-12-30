@@ -3,12 +3,18 @@
 #import <AppKit/AppKit.h>
 #import "CandidateTableView.h"
 
+@interface CandidateWindowContainer:NSView
+
+@end
+
 @interface CandidateWindow : NSWindow <NSTableViewDataSource, NSTableViewDelegate>
 {
     IMKInputController* _controller; //weak
     NSArray<NSAttributedString*>* _candidates;
     CandidateTableView* _table_view;
     NSScrollView* _scroll_view;
+    CGFloat _desired_width;
+    NSView* _container_view;
     NSMutableArray<NSAttributedString*>* _key_selection_candidates; //length = 9
 }
 
@@ -21,3 +27,5 @@
 -(void)boundsDidChange:(NSNotification*)notification;
 
 @end
+
+

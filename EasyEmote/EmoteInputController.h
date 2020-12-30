@@ -2,6 +2,7 @@
 #import <InputMethodKit/InputMethodKit.h>
 #import "Trie.h"
 #import "Preferences.h"
+#import "AppDelegate.h"
 
 const NSString* modeString = @"com.apple.inputmethod.emote";
 
@@ -16,7 +17,7 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
     NSInteger _curr_page;
     id _currentClient;
     NSMutableArray<Triplet*>* _curr_candidates;
-    NSMutableArray<NSString*>* _candidate_strings;
+    NSMutableArray<NSAttributedString*>* _candidate_strings;
 }
 
 -(id)get_curr_client;

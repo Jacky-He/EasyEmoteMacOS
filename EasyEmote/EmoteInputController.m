@@ -5,7 +5,7 @@
 
 -(BOOL)handleEvent:(NSEvent *)event client:(id)sender
 {
-    extern IMKCandidates* candidates;
+    CandidateWindow* candidates = [self get_candidate_window];
     _currentClient = sender;
     if ([event type] == keyUp) return false;
     unsigned short keycode = [event keyCode];
@@ -18,15 +18,21 @@
         if (!_starting) return [self convert:s client:sender];
     }
     if (!_starting) return false;
-    if (keycode == 36) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
+    if (keycode == 36 || keycode == 76) [candidates handleEvent:event];
     else if (keycode == 51) [self handle_backspace:sender];
     else if (keycode == 49) [self handle_space:sender];
-    else if (123 <= keycode && keycode <= 126) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]]; //arrow keys
-    else if (!s) [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
+    else if (123 <= keycode && keycode <= 126) [candidates handleEvent:event]; //arrow keys
+    else if (!s) [candidates handleEvent:event];
     else if ([s intValue] == 0) [self originalBufferAppend:s client:sender];
-    else [candidates interpretKeyEvents:[NSArray arrayWithObject:event]];
+    else [candidates handleEvent:event];
     //        [self handle_number:s client:sender];
     return true;
+}
+
+-(CandidateWindow*)get_candidate_window
+{
+    AppDelegate* delegate = [[NSApplication sharedApplication] delegate];
+    return [delegate get_window];
 }
 
 -(void)activateServer:(id)sender
@@ -38,7 +44,7 @@
 
 -(void)deactivateServer:(id)sender
 {
-    extern IMKCandidates* candidates;
+    CandidateWindow* candidates = [self get_candidate_window];
     [candidates hide];
 }
 
@@ -92,8 +98,7 @@
 //ensures that both buffers end up empty and insertion index is at 0
 -(BOOL)convert:(NSString*)trigger client:(id)sender
 {
-    _starting = NO;
-    extern IMKCandidates* candidates;
+    _starting = NO;;
     extern Preferences* preferences;
     NSMutableString* original = [self originalBuffer];
     NSMutableString* composed = [self composedBuffer];
@@ -170,7 +175,7 @@
 
 -(void)updateCandidatesWindow
 {
-    extern IMKCandidates* candidates;
+    CandidateWindow* candidates = [self get_candidate_window];
     if (!candidates)
     {
         NSLog(@"DEBUGMESSAGE: No Candidates?!");
@@ -180,7 +185,6 @@
     if (!_starting) [candidates hide];
     else
     {
-        [candidates setPanelType:kIMKSingleColumnScrollingCandidatePanel];
         //@assert that original buffer is not empty
         [self update_curr_candidates];
         if ([_curr_candidates count] == 0)
@@ -195,8 +199,8 @@
         }
         else
         {
-            [candidates setCandidateData:_candidate_strings];
-            [candidates show:kIMKLocateCandidatesBelowHint];
+            [candidates setCandidates:_candidate_strings];
+            [candidates show];
         }
     }
 }
@@ -219,8 +223,13 @@
     for (NSInteger i = 0; i < [_curr_candidates count]; i++) \
     {
         NSString* obj = [[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]];
-        [_candidate_strings addObject:obj];
+        NSFont* font = [NSFont fontWithName:@"Chalkboard" size:15];
+        NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+        [attributes setObject:font forKey:NSFontAttributeName];
+        NSAttributedString* temp = [[NSAttributedString alloc]initWithString:obj attributes:attributes];
+        [_candidate_strings addObject:temp];
         [obj release];
+        [temp release];
     }
 }
 
@@ -255,7 +264,7 @@
 -(NSInteger)get_index:(id)candidateString // zero indexed
 {
     NSString* s = candidateString;
-    NSArray<NSString*>* arr = _candidate_strings;
+    NSArray<NSAttributedString*>* arr = _candidate_strings;
     for (NSInteger i = 0; i < [arr count]; i++)
     {
         if ([arr[i] isEqualToString:s]) return i;

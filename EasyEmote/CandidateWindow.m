@@ -51,6 +51,10 @@
 
 -(void)show
 {
+    id client = [_controller get_curr_client];
+    NSRect rect = [client firstRectForCharacterRange:[client firstSelectedRange] actualRange:nil];
+    NSPoint botlef = NSMakePoint(rect.origin.x, rect.origin.y+rect.size.height);
+    [self setFrameTopLeftPoint:botlef];
     [self setIsVisible:YES];
 }
 

@@ -13,7 +13,6 @@
 const NSString* kConnectionName = @"EasyEmote_Connection";
 
 IMKServer* server;
-IMKCandidates* candidates = nil;
 Trie* dict;
 NSMutableDictionary* DUMMYDICT;
 Preferences* preferences;
@@ -54,7 +53,7 @@ int main(int argc, const char * argv[])
         NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
             
         server = [[[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier] autorelease];
-        candidates = [[[IMKCandidates alloc] initWithServer:server panelType:kIMKSingleColumnScrollingCandidatePanel styleType:kIMKMain] autorelease];
+        
         DUMMYDICT = [[[NSMutableDictionary alloc]init] autorelease];
         //load emojis
         dict = [[[Trie alloc] init] autorelease];

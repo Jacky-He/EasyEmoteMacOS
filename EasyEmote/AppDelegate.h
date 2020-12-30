@@ -8,4 +8,6 @@
     CandidateWindow* _window;
 }
 
+-(CandidateWindow*)get_window;
+
 @end

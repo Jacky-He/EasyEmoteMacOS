@@ -49,12 +49,12 @@
     }
 }
 
--(void)show
+-(void)show:(id)sender
 {
-    id client = [_controller get_curr_client];
-    NSRect rect = [client firstRectForCharacterRange:[client firstSelectedRange] actualRange:nil];
-    NSPoint botlef = NSMakePoint(rect.origin.x, rect.origin.y+rect.size.height);
-    [self setFrameTopLeftPoint:botlef];
+    NSRect rect;
+    [sender attributesForCharacterIndex:0 lineHeightRectangle:&rect];
+    NSPoint insertion_point = NSMakePoint(NSMinX(rect), NSMinY(rect));
+    [self setFrameTopLeftPoint: insertion_point];
     [self setIsVisible:YES];
 }
 

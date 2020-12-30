@@ -38,3 +38,4 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
 
 
 @end
+

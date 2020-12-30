@@ -39,6 +39,8 @@
 {
     _currentClient = sender;
     extern Preferences* preferences;
+    CandidateWindow* candidates = [self get_candidate_window];
+    [candidates setInputController:self];
 //    [preferences train_model];
 }
 
@@ -200,7 +202,7 @@
         else
         {
             [candidates setCandidates:_candidate_strings];
-            [candidates show];
+            [candidates show:_currentClient];
         }
     }
 }
@@ -267,7 +269,7 @@
     NSArray<NSAttributedString*>* arr = _candidate_strings;
     for (NSInteger i = 0; i < [arr count]; i++)
     {
-        if ([arr[i] isEqualToString:s]) return i;
+        if ([[arr[i] string] isEqualToString:s]) return i;
     }
     return NSNotFound;
 }

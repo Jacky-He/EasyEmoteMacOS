@@ -2,11 +2,10 @@
 #import <InputMethodKit/InputMethodKit.h>
 #import <AppKit/AppKit.h>
 #import "CandidateTableView.h"
-@class EmoteInputController;
 
 @interface CandidateWindow : NSWindow <NSTableViewDataSource, NSTableViewDelegate>
 {
-    EmoteInputController* _controller; //weak
+    IMKInputController* _controller; //weak
     NSArray<NSAttributedString*>* _candidates;
     CandidateTableView* _table_view;
     NSScrollView* _scroll_view;
@@ -14,11 +13,11 @@
 }
 
 +(instancetype)window;
--(void)show;
+-(void)show:(id)sender;
 -(void)hide;
 -(void)setCandidates:(NSArray<NSAttributedString*>*)arr;
 -(void)handleEvent:(NSEvent*)event;
--(void)setInputController:(EmoteInputController*)controller;
+-(void)setInputController:(IMKInputController*)controller;
 -(void)boundsDidChange:(NSNotification*)notification;
 
 @end

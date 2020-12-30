@@ -49,6 +49,7 @@ NSString* toUTF16Sequence(NSString* str)
 
 int main(int argc, const char * argv[])
 {
+    NSLog(@"DEBUGMESSAGE: Application opened");
     @autoreleasepool {
         NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
             
@@ -93,7 +94,7 @@ int main(int argc, const char * argv[])
             [preferences train_model];
         }
         NSLog(@"DEBUGMESSAGE: Application running");
-        [[NSApplication sharedApplication] setDelegate: [[[AppDelegate alloc]init] autorelease]];
+        [[NSApplication sharedApplication] setDelegate: [[[AppDelegate alloc] init] autorelease]];
         [[NSApplication sharedApplication] run];
     }
 //    return NSApplicationMain(argc, argv);

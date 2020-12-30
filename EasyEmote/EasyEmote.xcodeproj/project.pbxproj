@@ -16,6 +16,9 @@
 		8A6AC9E62595A5E700762532 /* YCML.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8A6AC9962595234B00762532 /* YCML.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8A6AC9E92596748A00762532 /* Record.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6AC9E82596732B00762532 /* Record.m */; };
 		8A6ACA4525970E9600762532 /* Triplet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6ACA4425970E9600762532 /* Triplet.m */; };
+		8A7DD3D8259BC1A40071A4FB /* CandidateTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7DD3D5259AC8BE0071A4FB /* CandidateTableView.m */; };
+		8A7DD3D9259BC1E30071A4FB /* CandidateTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */; };
+		8A7DD3DC259BEAA80071A4FB /* CandidateTableRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7DD3DB259BEAA80071A4FB /* CandidateTableRow.m */; };
 		8AB8BBC625915575008FA061 /* apple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 8AB8BBC525915575008FA061 /* apple.tiff */; };
 		8AB8BBCB2591563B008FA061 /* EmoteInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB8BBCA2591563B008FA061 /* EmoteInputController.m */; };
 		8AF18D6F259196FE0071A8A7 /* emojiStore.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8AF18D6E259196FE0071A8A7 /* emojiStore.txt */; };
@@ -67,6 +70,8 @@
 		8A7DD3D5259AC8BE0071A4FB /* CandidateTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CandidateTableView.m; sourceTree = "<group>"; };
 		8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CandidateTableCell.m; sourceTree = "<group>"; };
 		8A7DD3D7259AC8D10071A4FB /* CandidateTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CandidateTableCell.h; sourceTree = "<group>"; };
+		8A7DD3DA259BEA9B0071A4FB /* CandidateTableRow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CandidateTableRow.h; sourceTree = "<group>"; };
+		8A7DD3DB259BEAA80071A4FB /* CandidateTableRow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CandidateTableRow.m; sourceTree = "<group>"; };
 		8AB8BBC525915575008FA061 /* apple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = apple.tiff; sourceTree = "<group>"; };
 		8AB8BBC925915633008FA061 /* EmoteInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmoteInputController.h; sourceTree = "<group>"; };
 		8AB8BBCA2591563B008FA061 /* EmoteInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmoteInputController.m; sourceTree = "<group>"; };
@@ -211,6 +216,8 @@
 			children = (
 				8AF18D912593CF0F0071A8A7 /* CandidateWindow.h */,
 				8AF18D922593CF1A0071A8A7 /* CandidateWindow.m */,
+				8A7DD3DA259BEA9B0071A4FB /* CandidateTableRow.h */,
+				8A7DD3DB259BEAA80071A4FB /* CandidateTableRow.m */,
 				8A7DD3D4259AC8AD0071A4FB /* CandidateTableView.h */,
 				8A7DD3D5259AC8BE0071A4FB /* CandidateTableView.m */,
 				8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */,
@@ -337,6 +344,9 @@
 				8AF18D7B259199480071A8A7 /* TrieNode.m in Sources */,
 				8A6AC9E92596748A00762532 /* Record.m in Sources */,
 				8AF18D772591990C0071A8A7 /* Trie.m in Sources */,
+				8A7DD3D9259BC1E30071A4FB /* CandidateTableCell.m in Sources */,
+				8A7DD3D8259BC1A40071A4FB /* CandidateTableView.m in Sources */,
+				8A7DD3DC259BEAA80071A4FB /* CandidateTableRow.m in Sources */,
 				8A6AC97625951A2C00762532 /* Preferences.m in Sources */,
 				8A53D8D7259AB41000E659AA /* AppDelegate.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,

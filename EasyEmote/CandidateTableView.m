@@ -1,8 +1,12 @@
-//
-//  CandidateTableView.m
-//  EasyEmote
-//
-//  Created by Jacky He on 2020-12-28.
-//
+#import "CandidateTableView.h"
 
-#import <Foundation/Foundation.h>
+@implementation CandidateTableView
+
++(instancetype)table
+{
+    CandidateTableView* res = [CandidateTableView new];
+//    [res setBackgroundColor:[NSColor blueColor]];
+    return res;
+}
+
+@end

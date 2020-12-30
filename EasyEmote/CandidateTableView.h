@@ -1,12 +1,12 @@
-//
-//  CandidateTableView.h
-//  EasyEmote
-//
-//  Created by Jacky He on 2020-12-28.
-//
+#import <Cocoa/Cocoa.h>
+#import <AppKit/AppKit.h>
+#import "CandidateTableRow.h"
 
-#ifndef CandidateTableView_h
-#define CandidateTableView_h
+@interface CandidateTableView : NSTableView
+{
+    
+}
 
++(instancetype) table;
 
-#endif /* CandidateTableView_h */
+@end

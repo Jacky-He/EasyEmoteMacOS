@@ -5,7 +5,7 @@
 +(instancetype)window
 {
     CandidateWindow* res = [CandidateWindow new];
-    [res setStyleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskFullSizeContentView|NSWindowStyleMaskResizable];
+    [res setStyleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskFullSizeContentView];
     [res setBackingType:NSBackingStoreBuffered];
     [res setBackgroundColor: [NSColor clearColor]];
     NSScrollView* scrollview = [res get_scroll_view];
@@ -70,8 +70,39 @@
 {
     NSRect rect;
     [sender attributesForCharacterIndex:0 lineHeightRectangle:&rect];
-    NSPoint insertion_point = NSMakePoint(NSMinX(rect), NSMinY(rect));
+    CGFloat buffer = 3.0;
+    NSPoint insertion_point = NSMakePoint(NSMinX(rect), NSMinY(rect) - buffer);
+    
+    NSRect mainframe = [[NSScreen mainScreen] visibleFrame];
     [self setFrameTopLeftPoint: insertion_point];
+    if (!NSContainsRect(mainframe, self.frame))
+    {
+        NSRect intersect = NSIntersectionRect(mainframe, self.frame);
+        //Check bottom intersection
+        if (intersect.size.height < self.frame.size.height)
+        {
+            insertion_point = NSMakePoint(NSMinX(rect), MAX(NSMaxY(rect) + buffer, mainframe.origin.y));
+            [self setFrameOrigin:insertion_point]; //origin = bottom left point
+        }
+        
+        intersect = NSIntersectionRect(mainframe, self.frame);
+        //Check left intersection
+        if (self.frame.origin.x < intersect.origin.x)
+        {
+            NSRect tmp = self.frame;
+            tmp.origin.x = intersect.origin.x + buffer;
+            [self setFrameOrigin: tmp.origin];
+        }
+        
+        intersect = NSIntersectionRect(mainframe, self.frame);
+        //Check right intersection
+        if (self.frame.origin.x + self.frame.size.width > intersect.origin.x + intersect.size.width)
+        {
+            NSRect tmp = self.frame;
+            tmp.origin.x = intersect.origin.x + intersect.size.width - self.frame.size.width - buffer;
+            [self setFrameOrigin: tmp.origin];
+        }
+    }
     [self setIsVisible:YES];
 }
 

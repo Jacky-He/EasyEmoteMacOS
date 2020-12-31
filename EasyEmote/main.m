@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
                 NSLog(@"DEBUGMESSAGE: Error getting contents of file");
             }
         }
-
+        
         preferences = [[[Preferences alloc] init] autorelease];
 
         @autoreleasepool {

@@ -5,105 +5,112 @@
 +(instancetype)window
 {
     CandidateWindow* res = [CandidateWindow new];
-    [res setStyleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskFullSizeContentView];
-    [res setBackingType:NSBackingStoreBuffered];
-    [res setBackgroundColor: [NSColor clearColor]];
-    NSScrollView* scrollview = [res get_scroll_view];
-    CandidateTableView* tableview = [res get_table_view];
-    NSView* container = [res get_container_view];
+    @autoreleasepool {
+        [res setStyleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskFullSizeContentView];
+        [res setBackingType:NSBackingStoreBuffered];
+        [res setBackgroundColor: [NSColor clearColor]];
+        NSScrollView* scrollview = [res get_scroll_view];
+        CandidateTableView* tableview = [res get_table_view];
+        NSView* container = [res get_container_view];
 
-    [container addSubview:scrollview];
-    [scrollview setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [scrollview.topAnchor constraintEqualToAnchor:container.topAnchor].active = YES;
-    [scrollview.bottomAnchor constraintEqualToAnchor:container.bottomAnchor].active = YES;
-    [scrollview.leadingAnchor constraintEqualToAnchor:container.leadingAnchor].active = YES;
-    [scrollview.trailingAnchor constraintEqualToAnchor:container.trailingAnchor].active = YES;
-    
-    [scrollview setDocumentView: tableview];
-    [[scrollview contentView] setPostsBoundsChangedNotifications:YES];
-    [[NSNotificationCenter defaultCenter] addObserver:res selector:@selector(boundsDidChange:) name:NSViewBoundsDidChangeNotification object:[scrollview contentView]];
-    
-    [res setContentView:container];
-    [res setLevel:CGShieldingWindowLevel()+1];
-    [res makeKeyAndOrderFront:NSApp];
-    return res;
+        [container addSubview:scrollview];
+        [scrollview setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [scrollview.topAnchor constraintEqualToAnchor:container.topAnchor].active = YES;
+        [scrollview.bottomAnchor constraintEqualToAnchor:container.bottomAnchor].active = YES;
+        [scrollview.leadingAnchor constraintEqualToAnchor:container.leadingAnchor].active = YES;
+        [scrollview.trailingAnchor constraintEqualToAnchor:container.trailingAnchor].active = YES;
+        
+        [scrollview setDocumentView: tableview];
+        [[scrollview contentView] setPostsBoundsChangedNotifications:YES];
+        [[NSNotificationCenter defaultCenter] addObserver:res selector:@selector(boundsDidChange:) name:NSViewBoundsDidChangeNotification object:[scrollview contentView]];
+        
+        [res setContentView:container];
+        [res setLevel:CGShieldingWindowLevel()+1];
+        [res hide];
+    }
+    return [res autorelease];
 }
 
 -(void)handleEvent:(NSEvent*)event
 {
-    unsigned short keycode = [event keyCode];
-    NSString* s = [event characters];
-    if (keycode == 36 || keycode == 76) //return/enter
-    {
-        CandidateTableView* tableview = [self get_table_view];
-        NSInteger curr = [tableview selectedRow];
-        if (0 <= curr && curr < [_candidates count]) [_controller candidateSelected:_candidates[curr]];
-    }
-    else if (keycode == 125) //arrow down
-    {
-        CandidateTableView* tableview = [self get_table_view];
-        NSInteger curr = [tableview selectedRow];
-        if (0 <= curr + 1 && curr + 1 < [_candidates count])
+    @autoreleasepool {
+        unsigned short keycode = [event keyCode];
+        NSString* s = [event characters];
+        if (keycode == 36 || keycode == 76) //return/enter
         {
-            [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr+1] byExtendingSelection:NO];
-            [tableview scrollRowToVisible:curr+1];
+            CandidateTableView* tableview = [self get_table_view];
+            NSInteger curr = [tableview selectedRow];
+            if (0 <= curr && curr < [_candidates count]) [_controller candidateSelected:_candidates[curr]];
         }
-    }
-    else if (keycode == 126) //arrow up
-    {
-        CandidateTableView* tableview = [self get_table_view];
-        NSInteger curr = [tableview selectedRow];
-        if (0 <= curr - 1 && curr - 1 < [_candidates count])
+        else if (keycode == 125) //arrow down
         {
-            [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr-1] byExtendingSelection:NO];
-            [tableview scrollRowToVisible:curr-1];
+            CandidateTableView* tableview = [self get_table_view];
+            NSInteger curr = [tableview selectedRow];
+            if (0 <= curr + 1 && curr + 1 < [_candidates count])
+            {
+                [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr+1] byExtendingSelection:NO];
+                [tableview scrollRowToVisible:curr+1];
+            }
         }
-    }
-    else if (s && [s intValue] != 0) //numbers
-    {
-        int val = [s intValue];
-        if (1 <= val && val <= MIN(9, [_candidates count]) && _controller != nil) [_controller candidateSelected:_key_selection_candidates[val-1]];
+        else if (keycode == 126) //arrow up
+        {
+            CandidateTableView* tableview = [self get_table_view];
+            NSInteger curr = [tableview selectedRow];
+            if (0 <= curr - 1 && curr - 1 < [_candidates count])
+            {
+                [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:curr-1] byExtendingSelection:NO];
+                [tableview scrollRowToVisible:curr-1];
+            }
+        }
+        else if (s && [s intValue] != 0) //numbers
+        {
+            int val = [s intValue];
+            if (1 <= val && val <= MIN(9, [_candidates count]) && _controller != nil) [_controller candidateSelected:_key_selection_candidates[val-1]];
+        }
     }
 }
 
 -(void)show:(id)sender
 {
-    NSRect rect;
-    [sender attributesForCharacterIndex:0 lineHeightRectangle:&rect];
-    CGFloat buffer = 3.0;
-    NSPoint insertion_point = NSMakePoint(NSMinX(rect), NSMinY(rect) - buffer);
-    
-    NSRect mainframe = [[NSScreen mainScreen] visibleFrame];
-    [self setFrameTopLeftPoint: insertion_point];
-    if (!NSContainsRect(mainframe, self.frame))
-    {
-        NSRect intersect = NSIntersectionRect(mainframe, self.frame);
-        //Check bottom intersection
-        if (intersect.size.height < self.frame.size.height)
-        {
-            insertion_point = NSMakePoint(NSMinX(rect), MAX(NSMaxY(rect) + buffer, mainframe.origin.y));
-            [self setFrameOrigin:insertion_point]; //origin = bottom left point
-        }
+    @autoreleasepool {
+        NSRect rect;
+        [sender attributesForCharacterIndex:0 lineHeightRectangle:&rect];
+        CGFloat buffer = 3.0;
+        NSPoint insertion_point = NSMakePoint(NSMinX(rect), NSMinY(rect) - buffer);
         
-        intersect = NSIntersectionRect(mainframe, self.frame);
-        //Check left intersection
-        if (self.frame.origin.x < intersect.origin.x)
+        NSRect mainframe = [[NSScreen mainScreen] visibleFrame];
+        [self setFrameTopLeftPoint: insertion_point];
+        if (!NSContainsRect(mainframe, self.frame))
         {
-            NSRect tmp = self.frame;
-            tmp.origin.x = intersect.origin.x + buffer;
-            [self setFrameOrigin: tmp.origin];
+            NSRect intersect = NSIntersectionRect(mainframe, self.frame);
+            //Check bottom intersection
+            if (intersect.size.height < self.frame.size.height)
+            {
+                insertion_point = NSMakePoint(NSMinX(rect), MAX(NSMaxY(rect) + buffer, mainframe.origin.y));
+                [self setFrameOrigin:insertion_point]; //origin = bottom left point
+            }
+            
+            intersect = NSIntersectionRect(mainframe, self.frame);
+            //Check left intersection
+            if (self.frame.origin.x < intersect.origin.x)
+            {
+                NSRect tmp = self.frame;
+                tmp.origin.x = intersect.origin.x + buffer;
+                [self setFrameOrigin: tmp.origin];
+            }
+            
+            intersect = NSIntersectionRect(mainframe, self.frame);
+            //Check right intersection
+            if (self.frame.origin.x + self.frame.size.width > intersect.origin.x + intersect.size.width)
+            {
+                NSRect tmp = self.frame;
+                tmp.origin.x = intersect.origin.x + intersect.size.width - self.frame.size.width - buffer;
+                [self setFrameOrigin: tmp.origin];
+            }
         }
-        
-        intersect = NSIntersectionRect(mainframe, self.frame);
-        //Check right intersection
-        if (self.frame.origin.x + self.frame.size.width > intersect.origin.x + intersect.size.width)
-        {
-            NSRect tmp = self.frame;
-            tmp.origin.x = intersect.origin.x + intersect.size.width - self.frame.size.width - buffer;
-            [self setFrameOrigin: tmp.origin];
-        }
+        [self makeKeyAndOrderFront:NSApp];
+        [self setIsVisible:YES];
     }
-    [self setIsVisible:YES];
 }
 
 -(void)hide
@@ -113,73 +120,85 @@
 
 -(CandidateTableView*)get_table_view
 {
-    if (_table_view == nil)
-    {
-        _table_view = [[CandidateTableView table] retain];
-        [_table_view setDataSource:self];
-        [_table_view setDelegate:self];
-        [_table_view setEnabled:YES];
-        [_table_view setHeaderView:nil];
-        [_table_view setBackgroundColor:[NSColor clearColor]];
-        [_table_view setTarget:self];
-        [_table_view setDoubleAction:@selector(doubleClicked:)];
-        NSTableColumn* col = [[[NSTableColumn alloc]initWithIdentifier:@"emotes"] autorelease];
-        [_table_view addTableColumn:col];
+    @autoreleasepool {
+        if (_table_view == nil)
+        {
+            _table_view = [[CandidateTableView table] retain];
+            [_table_view setDataSource:self];
+            [_table_view setDelegate:self];
+            [_table_view setEnabled:YES];
+            [_table_view setHeaderView:nil];
+            [_table_view setBackgroundColor:[NSColor clearColor]];
+            [_table_view setTarget:self];
+            [_table_view setDoubleAction:@selector(doubleClicked:)];
+            NSTableColumn* col = [[[NSTableColumn alloc]initWithIdentifier:@"emotes"] autorelease];
+            [_table_view addTableColumn:col];
+        }
     }
     return _table_view;
 }
 
 -(NSView*)get_container_view
 {
-    if (_container_view == nil)
-    {
-        _container_view = [[NSView new] retain];
-        [_container_view setWantsLayer:YES];
-        [_container_view.layer setBackgroundColor:[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9].CGColor];
-        [_container_view.layer setCornerRadius:6.0];
+    @autoreleasepool {
+        if (_container_view == nil)
+        {
+            _container_view = [NSView new];
+            [_container_view setWantsLayer:YES];
+            [_container_view.layer setBackgroundColor:[NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9].CGColor];
+            [_container_view.layer setCornerRadius:6.0];
+        }
     }
     return _container_view;
 }
 
 -(NSScrollView*)get_scroll_view
 {
-    if (_scroll_view == nil)
-    {
-        _scroll_view = [[NSScrollView new] retain];
-        [_scroll_view setBackgroundColor:[NSColor clearColor]];
-        [_scroll_view setDrawsBackground:NO];
+    @autoreleasepool {
+        if (_scroll_view == nil)
+        {
+            _scroll_view = [NSScrollView new];
+            [_scroll_view setBackgroundColor:[NSColor clearColor]];
+            [_scroll_view setDrawsBackground:NO];
+        }
     }
     return _scroll_view;
 }
 
 -(void)setCandidates:(NSArray<NSAttributedString*>*)arr
 {
-    [arr retain];
-    [_candidates release];
-    _candidates = arr;
-    if (_key_selection_candidates == nil)
-    {
-        _key_selection_candidates = [[NSMutableArray alloc] init];
-        for (NSInteger i = 0; i < 9; i++)
+    @autoreleasepool {
+        [arr retain];
+        [_candidates release];
+        _candidates = arr;
+        if (_key_selection_candidates == nil)
         {
-            NSAttributedString* str = [[NSAttributedString alloc]initWithString:@""];
-            [_key_selection_candidates addObject:str];
-            [str release];
+            _key_selection_candidates = [[NSMutableArray alloc] init];
+            for (NSInteger i = 0; i < 9; i++)
+            {
+                NSAttributedString* str = [[NSAttributedString alloc] initWithString:@""];
+                [_key_selection_candidates addObject:str];
+                [str release];
+            }
+        }
+        
+        for (NSInteger i = 0; i < MIN(9, [_candidates count]); i++) [_key_selection_candidates setObject:[_candidates objectAtIndex:i] atIndexedSubscript:i];
+        
+        CandidateTableView* tableview = [self get_table_view];
+        
+        //resize window
+        [tableview reloadData];
+        CGSize maxsize = tableview.frame.size;
+        maxsize.height = MIN(tableview.frame.size.height, 300.0);
+        maxsize.width = [self get_tightest_width_of_rows:NSMakeRange(0, 10)];
+        [self setContentSize: maxsize];
+        
+        if ([_candidates count] > 0)
+        {
+            [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+            [tableview scrollRowToVisible:0];
         }
     }
-    
-    for (NSInteger i = 0; i < MIN(9, [_candidates count]); i++) [_key_selection_candidates setObject:[_candidates objectAtIndex:i] atIndexedSubscript:i];
-    
-    CandidateTableView* tableview = [self get_table_view];
-    
-    //resize window
-    [tableview reloadData];
-    CGSize maxsize = tableview.frame.size;
-    maxsize.height = MIN(tableview.frame.size.height, 300.0);
-    maxsize.width = [self get_tightest_width_of_rows:NSMakeRange(0, 10)];
-    [self setContentSize: maxsize];
-    
-    if ([_candidates count] > 0) [tableview selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 }
 
 -(void)setInputController:(IMKInputController*)controller
@@ -226,24 +245,21 @@
 
 -(NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row
 {
-    return [CandidateTableRow new];
-}
-
--(void)tableViewSelectionDidChange:(NSNotification *)notification
-{
-    
+    return [[CandidateTableRow new] autorelease];
 }
 
 -(void)boundsDidChange:(NSNotification *)notification
 {
-    CandidateTableView* tableview = [self get_table_view];
-    NSRect rect = [tableview visibleRect];
-    NSRange rows = [tableview rowsInRect:rect];
-    [tableview reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:rows] columnIndexes:[NSIndexSet indexSetWithIndex:0]];
-    CGSize maxsize = tableview.frame.size;
-    maxsize.height = MIN(tableview.frame.size.height, 300.0);
-    maxsize.width = [self get_tightest_width_of_rows:rows];
-    [self setContentSize: maxsize];
+    @autoreleasepool {
+        CandidateTableView* tableview = [self get_table_view];
+        NSRect rect = [tableview visibleRect];
+        NSRange rows = [tableview rowsInRect:rect];
+        [tableview reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:rows] columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+        CGSize maxsize = tableview.frame.size;
+        maxsize.height = MIN(tableview.frame.size.height, 300.0);
+        maxsize.width = [self get_tightest_width_of_rows:rows];
+        [self setContentSize: maxsize];
+    }
 }
 
 -(CGFloat)get_width_of_row_with_str:(NSAttributedString*)str
@@ -262,6 +278,7 @@
         [temp setTranslatesAutoresizingMaskIntoConstraints:NO];
         [temp setAttributedStringValue:str];
         res += temp.intrinsicContentSize.width;
+        [temp release];
     }
     return res;
 }
@@ -291,5 +308,5 @@
     [_container_view release];
     [super dealloc];
 }
-
 @end
+

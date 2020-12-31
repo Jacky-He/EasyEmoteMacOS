@@ -225,7 +225,6 @@
 -(void)load_properties:(Node)node
 {
     [self make_linked_lists:node];
-    NSLog(@"DEBUGMESSAGE: made");
     [self clearalldict:node];
     [self load_occurrences:node];
     [self load_last_same_ancestor:node dict:[NSMutableDictionary dictionary]];
@@ -268,7 +267,6 @@
         Node last = [last_ocurrences[i] objectForKey:[sequence substringWithRange:NSMakeRange(idx, 1)]];
         while (n != last)
         {
-//            NSLog(@"DEBUGMESSAGE: %@, %lu, %@", [last get_value], i, n);
             NSInteger last_ans = [n get_last_same_ancestor_level];
             if (last_ans <= [curr get_curr_level]) [self subsequence_search_helper:sequence curridx:idx+1 currnode:n arr:res];
             n = [n get_next_in_level];

@@ -5,26 +5,28 @@
 +(instancetype)cell
 {
     CandidateTableCell* res = [CandidateTableCell new];
-    NSTextField* text_label = [res get_text_label];
-    NSTextField* num_label = [res get_num_label];
-    
-    [res addSubview:num_label];
-    [num_label.leadingAnchor constraintEqualToAnchor:res.leadingAnchor].active = YES;
-    [num_label.centerYAnchor constraintEqualToAnchor:res.centerYAnchor].active = YES;
-    [num_label.widthAnchor constraintEqualToConstant:18].active = YES;
-    
-    [res addSubview:text_label];
-    [text_label.leadingAnchor constraintEqualToAnchor:num_label.trailingAnchor].active = YES;
-    [text_label.trailingAnchor constraintEqualToAnchor:res.trailingAnchor constant:3].active = YES;
-    [text_label.centerYAnchor constraintEqualToAnchor:res.centerYAnchor].active = YES;
-    return res;
+    @autoreleasepool {
+        NSTextField* text_label = [res get_text_label];
+        NSTextField* num_label = [res get_num_label];
+        
+        [res addSubview:num_label];
+        [num_label.leadingAnchor constraintEqualToAnchor:res.leadingAnchor].active = YES;
+        [num_label.centerYAnchor constraintEqualToAnchor:res.centerYAnchor].active = YES;
+        [num_label.widthAnchor constraintEqualToConstant:18].active = YES;
+        
+        [res addSubview:text_label];
+        [text_label.leadingAnchor constraintEqualToAnchor:num_label.trailingAnchor].active = YES;
+        [text_label.trailingAnchor constraintEqualToAnchor:res.trailingAnchor constant:3].active = YES;
+        [text_label.centerYAnchor constraintEqualToAnchor:res.centerYAnchor].active = YES;
+    }
+    return [res autorelease];
 }
 
 -(NSTextField*)get_num_label
 {
     if (_num_label == nil)
     {
-        _num_label = [[NSTextField new] retain];
+        _num_label = [NSTextField new];
         [_num_label setFont:[NSFont fontWithName:@"Chalkboard" size:15]];
         [_num_label setBezeled:NO];
         [_num_label setDrawsBackground:NO];
@@ -42,7 +44,7 @@
 {
     if (_text_label == nil)
     {
-        _text_label = [[NSTextField new] retain];
+        _text_label = [NSTextField new];
         [_text_label setBezeled:NO];
         [_text_label setDrawsBackground:NO];
         [_text_label setEditable:NO];

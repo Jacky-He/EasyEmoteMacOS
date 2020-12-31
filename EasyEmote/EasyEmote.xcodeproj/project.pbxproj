@@ -220,8 +220,8 @@
 				8A7DD3DB259BEAA80071A4FB /* CandidateTableRow.m */,
 				8A7DD3D4259AC8AD0071A4FB /* CandidateTableView.h */,
 				8A7DD3D5259AC8BE0071A4FB /* CandidateTableView.m */,
-				8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */,
 				8A7DD3D7259AC8D10071A4FB /* CandidateTableCell.h */,
+				8A7DD3D6259AC8C80071A4FB /* CandidateTableCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";

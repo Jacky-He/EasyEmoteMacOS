@@ -15,16 +15,25 @@
     {
         _starting = !_starting;
         _doConvert = YES;
-        if (!_starting) return [self convert:s client:sender];
+        if (!_starting)
+        {
+            BOOL res = NO;
+            @autoreleasepool {
+                res = [self convert:s client:sender];
+            }
+            return res;
+        }
     }
     if (!_starting) return false;
-    if (keycode == 36 || keycode == 76) [candidates handleEvent:event];
-    else if (keycode == 51) [self handle_backspace:sender];
-    else if (keycode == 49) [self handle_space:sender];
-    else if (123 <= keycode && keycode <= 126) [candidates handleEvent:event]; //arrow keys
-    else if (!s) [candidates handleEvent:event];
-    else if ([s intValue] == 0) [self originalBufferAppend:s client:sender];
-    else [candidates handleEvent:event];
+    @autoreleasepool {
+        if (keycode == 36 || keycode == 76) [candidates handleEvent:event];
+        else if (keycode == 51) [self handle_backspace:sender];
+        else if (keycode == 49) [self handle_space:sender];
+        else if (123 <= keycode && keycode <= 126) [candidates handleEvent:event]; //arrow keys
+        else if (!s) [candidates handleEvent:event];
+        else if ([s intValue] == 0) [self originalBufferAppend:s client:sender];
+        else [candidates handleEvent:event];
+    }
     //        [self handle_number:s client:sender];
     return true;
 }
@@ -126,31 +135,10 @@
     return YES;
 }
 
--(void)handle_number:(NSString*)trigger client:(id)sender
-{
-    extern Preferences* preferences;
-    NSInteger val = [trigger intValue];
-    if (val < 1 || val > 9) return;
-    val--;
-    NSInteger target = _curr_page*9 + val;
-    if (0 <= target && target < [_curr_candidates count])
-    {
-        [self setComposedBuffer:[_curr_candidates[target] second]];
-        [self commitComposition:sender];
-        [preferences insert_new_entry:_curr_candidates[target] candidates:_curr_candidates];
-    }
-}
-
 -(void)handle_space:(id)sender
 {
     _doConvert = NO;
     [self convert:@" " client:sender];
-}
-
--(void)handle_newline:(id)sender
-{
-//    _doConvert = YES;
-//    [self convert:@"\n" client:sender];
 }
 
 -(void)handle_backspace:(id)sender
@@ -164,15 +152,6 @@
     }
     if ([originalText length] == 0) _starting = NO;
     [self updateCandidatesWindow];
-}
-
--(void)candidateSelectionChanged:(NSAttributedString *)candidateString
-{
-    @autoreleasepool {
-        NSString* str = [candidateString string];
-        _curr_index = [self get_index:str];
-        _curr_page = [self get_page_with_index:_curr_index];
-    }
 }
 
 -(void)updateCandidatesWindow
@@ -216,22 +195,24 @@
 {
     extern Trie* dict;
     extern Preferences* preferences;
-    NSMutableArray<Triplet*>* new_can = [[dict subsequence_search:[[self originalBuffer] substringFromIndex:1]] retain];
-    [_curr_candidates release];
-    _curr_candidates = new_can;
-    [preferences sort_based_on_history:_curr_candidates];
-    [_candidate_strings release];
-    _candidate_strings = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < [_curr_candidates count]; i++)
-    {
-        NSString* obj = [[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]];
-        NSFont* font = [NSFont fontWithName:@"Chalkboard" size:15];
-        NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-        [attributes setObject:font forKey:NSFontAttributeName];
-        NSAttributedString* temp = [[NSAttributedString alloc] initWithString:obj attributes:attributes];
-        [_candidate_strings addObject:temp];
-        [obj release];
-        [temp release];
+    @autoreleasepool {
+        NSMutableArray<Triplet*>* new_can = [[dict subsequence_search:[[self originalBuffer] substringFromIndex:1]] retain];
+        [_curr_candidates release];
+        _curr_candidates = new_can;
+        [preferences sort_based_on_history:_curr_candidates];
+        [_candidate_strings release];
+        _candidate_strings = [[NSMutableArray alloc] init];
+        for (NSInteger i = 0; i < [_curr_candidates count]; i++)
+        {
+            NSString* obj = [[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]];
+            NSFont* font = [NSFont fontWithName:@"Chalkboard" size:15];
+            NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+            [attributes setObject:font forKey:NSFontAttributeName];
+            NSAttributedString* temp = [[NSAttributedString alloc] initWithString:obj attributes:attributes];
+            [_candidate_strings addObject:temp];
+            [obj release];
+            [temp release];
+        }
     }
 }
 
@@ -244,34 +225,20 @@
 -(void)candidateSelected:(NSAttributedString *)candidateString
 {
     extern Preferences* preferences;
-    NSString* tmp = [candidateString string];
-    NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" "];
-    [self setComposedBuffer:line[0]];
-    NSMutableArray<Triplet*>* t = [_curr_candidates retain];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        @autoreleasepool {
-            Triplet* obj = [Triplet triplet:line[1] second:line[0] third:line[0]];
-            [preferences insert_new_entry:obj candidates:t];
-            [t release];
-        }
-    });
-    [self commitComposition:_currentClient];
-}
-
--(NSInteger)get_page_with_index:(NSInteger)candidateIdentifier // zero indexed
-{
-    return candidateIdentifier/9;
-}
-
--(NSInteger)get_index:(id)candidateString // zero indexed
-{
-    NSString* s = candidateString;
-    NSArray<NSAttributedString*>* arr = _candidate_strings;
-    for (NSInteger i = 0; i < [arr count]; i++)
-    {
-        if ([[arr[i] string] isEqualToString:s]) return i;
+    @autoreleasepool {
+        NSString* tmp = [candidateString string];
+        NSArray<NSString*>* line = [tmp componentsSeparatedByString:@" "];
+        [self setComposedBuffer:line[0]];
+        NSMutableArray<Triplet*>* t = [_curr_candidates retain];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            @autoreleasepool {
+                Triplet* obj = [Triplet triplet:line[1] second:line[0] third:line[0]];
+                [preferences insert_new_entry:obj candidates:t];
+                [t release];
+            }
+        });
+        [self commitComposition:_currentClient];
     }
-    return NSNotFound;
 }
 
 -(void)dealloc

@@ -29,12 +29,8 @@ const NSString* modeString = @"com.apple.inputmethod.emote";
 -(BOOL)convert:(NSString*)trigger client:(id)sender;
 -(void)updateCandidatesWindow;
 -(void)update_curr_candidates;
--(void)handle_newline:(id)sender;
 -(void)handle_backspace:(id)sender;
 -(void)handle_space:(id)sender;
--(void)handle_number:(NSString*)trigger client:(id)sender;
--(NSInteger)get_page_with_index:(NSInteger)candidateIdentifier; // zero indexed
--(NSInteger)get_index:(id)candidateString; // zero indexed
 
 
 @end

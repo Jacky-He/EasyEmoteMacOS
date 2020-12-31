@@ -27,12 +27,14 @@
         for (NSInteger i = 0; i < [word length]; i++)
         {
             [curr set_numlevels:MAX([curr get_numlevels], [word length]-i)];
+            [curr set_curr_level:i];
             NSString* c = [word substringWithRange:NSMakeRange(i, 1)];
             [curr add: c];
             curr = [curr children][c];
             [curr set_cnt:([curr get_cnt]+1)];
         }
         [curr set_numlevels:MAX([curr get_numlevels], 0)]; //not counting root
+        [curr set_curr_level:[word length]];
         [curr set_unicode_str:unicode];
         [curr set_descr_str:[[@":" stringByAppendingString:word] stringByAppendingString:@":"]];
     }
@@ -99,7 +101,7 @@
     return idx == [descr length] ? [curr get_unicode_str] : nil;
 }
 
--(void)load_properties:(Node)node
+-(void)make_linked_lists:(Node)node
 {
     extern NSMutableDictionary* DUMMYDICT;
     NSArray* sortedKeys = [[[node children] allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
@@ -107,7 +109,73 @@
     for (NSString* key in sortedKeys)
     {
         Node neighbour = [node children][key];
-        [self load_properties:neighbour];
+        [self make_linked_lists:neighbour];
+        NSMutableDictionary* a = [node get_first_occurrences_at_level:0];
+        NSMutableDictionary* b = [node get_last_occurrences_at_level:0];
+        [a setObject:neighbour forKey:key];
+        [b setObject:neighbour forKey:key];
+        NSMutableArray<NSMutableDictionary*>* cfirst_occur = [neighbour get_first_occurrences];
+        NSMutableArray<NSMutableDictionary*>* clast_occur = [neighbour get_last_occurrences];
+        for (NSInteger i = 1; i < [node get_numlevels]; i++)
+        {
+            if (i-1 >= [neighbour get_numlevels]) break;
+            NSMutableDictionary* cfirst_dict = cfirst_occur[i-1];
+            NSMutableDictionary* clast_dict = clast_occur[i-1];
+            if (cfirst_dict == DUMMYDICT) continue;
+            NSArray* chars = [cfirst_dict allKeys];
+            for (NSString* c in chars)
+            {
+                NSMutableDictionary* first_dict = [node get_first_occurrences_at_level:i];
+                NSMutableDictionary* last_dict = [node get_last_occurrences_at_level:i];
+                if ([first_dict objectForKey:c] == nil) [first_dict setObject:cfirst_dict[c] forKey:c];
+                [last_dict setObject:clast_dict[c] forKey:c];
+            }
+        }
+    }
+    for (NSInteger i = 0; i < [sortedKeys count]; i++)
+    {
+        NSString* key = sortedKeys[i];
+        Node currnode = [node children][key];
+        NSMutableArray<NSMutableDictionary*>* last_occur = [currnode get_last_occurrences];
+        for (NSInteger k = 0; k < [currnode get_numlevels]; k++)
+        {
+            for (NSInteger j = i+1; j < [sortedKeys count]; j++)
+            {
+                NSString* nextkey = sortedKeys[j];
+                Node nextnode = [node children][nextkey];
+                NSMutableArray<NSMutableDictionary*>* first_occur = [nextnode get_first_occurrences];
+                if (k >= [nextnode get_numlevels]) continue;
+                NSMutableDictionary* last_occur_level = last_occur[k];
+                NSMutableDictionary* first_occur_level = first_occur[k];
+                if (last_occur_level == DUMMYDICT) break;
+                if (first_occur_level == DUMMYDICT) continue;
+                NSArray* chars = [last_occur_level allKeys];
+                for (NSString* c in chars)
+                {
+                    Node n = [last_occur_level objectForKey:c];
+                    if ([n get_next_in_level] == nil && [first_occur_level objectForKey:c] != nil) [n set_next_in_level:[first_occur_level objectForKey:c]];
+                }
+            }
+        }
+    }
+}
+
+-(void)clearalldict:(Node)node
+{
+    for (Node each in [[node children] allValues]) [self clearalldict:each];
+    [node clear_first_occurrences];
+    [node clear_last_occurrences];
+}
+
+-(void)load_occurrences:(Node)node
+{
+    extern NSMutableDictionary* DUMMYDICT;
+    NSArray* sortedKeys = [[[node children] allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    if ([sortedKeys count] == 0) return;
+    for (NSString* key in sortedKeys)
+    {
+        Node neighbour = [node children][key];
+        [self load_occurrences:neighbour];
         NSMutableDictionary* a = [node get_first_occurrences_at_level:0];
         NSMutableDictionary* b = [node get_last_occurrences_at_level:0];
         [a setObject:neighbour forKey:key];
@@ -133,30 +201,34 @@
             }
         }
     }
-    for (NSInteger i = 0; i < [sortedKeys count]; i++)
+}
+
+-(void)load_last_same_ancestor:(Node)node dict:(NSMutableDictionary*)seen
+{
+    if ([node get_value] == nil)
     {
-        NSString* key = sortedKeys[i];
-        NSMutableArray<NSMutableDictionary*>* last_occur = [[node children][key] get_last_occurrences];
-        for (NSInteger k = 0; k < [[node children][key] get_numlevels]; k++)
-        {
-            for (NSInteger j = i+1; j < [sortedKeys count]; j++)
-            {
-                NSString* nextkey = sortedKeys[j];
-                NSMutableArray<NSMutableDictionary*>* first_occur = [[node children][nextkey] get_first_occurrences];
-                if (k >= [[node children][nextkey] get_numlevels]) continue;
-                NSMutableDictionary* last_occur_level = last_occur[k];
-                NSMutableDictionary* first_occur_level = first_occur[k];
-                if (last_occur_level == DUMMYDICT) break;
-                if (first_occur_level == DUMMYDICT) continue;
-                NSArray* chars = [last_occur_level allKeys];
-                for (NSString* c in chars)
-                {
-                    Node n = [last_occur_level objectForKey:c];
-                    if ([n get_next_in_level] == nil && [first_occur_level objectForKey:c] != nil) [n set_next_in_level:[first_occur_level objectForKey:c]];
-                }
-            }
-        }
+        [node set_last_same_ancestor_level:-1];
+        for (Node each in [[node children] allValues]) [self load_last_same_ancestor:each dict:seen];
     }
+    else
+    {
+        NSNumber* n = [seen objectForKey:[node get_value]];
+        if (n == nil) [node set_last_same_ancestor_level:-1];
+        else [node set_last_same_ancestor_level:[n integerValue]];
+        [seen setObject:[NSNumber numberWithInteger:[node get_curr_level]] forKey:[node get_value]];
+        for (Node each in [[node children] allValues]) [self load_last_same_ancestor:each dict:seen];
+        if (n == nil) [seen removeObjectForKey:[node get_value]];
+        else [seen setObject:n forKey:[node get_value]];
+    }
+}
+
+-(void)load_properties:(Node)node
+{
+    [self make_linked_lists:node];
+    NSLog(@"DEBUGMESSAGE: made");
+    [self clearalldict:node];
+    [self load_occurrences:node];
+    [self load_last_same_ancestor:node dict:[NSMutableDictionary dictionary]];
 }
 
 -(void)dfs_get_emote:(Node)curr arr:(NSMutableArray<Triplet*>*)res
@@ -196,7 +268,9 @@
         Node last = [last_ocurrences[i] objectForKey:[sequence substringWithRange:NSMakeRange(idx, 1)]];
         while (n != last)
         {
-            [self subsequence_search_helper:sequence curridx:idx+1 currnode:n arr:res];
+//            NSLog(@"DEBUGMESSAGE: %@, %lu, %@", [last get_value], i, n);
+            NSInteger last_ans = [n get_last_same_ancestor_level];
+            if (last_ans <= [curr get_curr_level]) [self subsequence_search_helper:sequence curridx:idx+1 currnode:n arr:res];
             n = [n get_next_in_level];
         }
         [self subsequence_search_helper:sequence curridx:idx+1 currnode:n arr:res];

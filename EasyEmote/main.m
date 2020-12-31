@@ -52,9 +52,9 @@ int main(int argc, const char * argv[])
     NSLog(@"DEBUGMESSAGE: Application opened");
     @autoreleasepool {
         NSString* identifier = [[NSBundle mainBundle] bundleIdentifier];
-            
+
         server = [[[IMKServer alloc] initWithName:(NSString*)kConnectionName bundleIdentifier:identifier] autorelease];
-        
+
         DUMMYDICT = [[[NSMutableDictionary alloc]init] autorelease];
         //load emojis
         dict = [[[Trie alloc] init] autorelease];
@@ -83,9 +83,9 @@ int main(int argc, const char * argv[])
                 NSLog(@"DEBUGMESSAGE: Error getting contents of file");
             }
         }
-        
+
         preferences = [[[Preferences alloc] init] autorelease];
-        
+
         @autoreleasepool {
             [dict load_properties:[dict root]];
             NSMutableArray<Triplet*>* allemotes = [dict subsequence_search:@""];
@@ -93,6 +93,7 @@ int main(int argc, const char * argv[])
             [preferences load_all_emote_records];
             [preferences train_model];
         }
+        
         NSLog(@"DEBUGMESSAGE: Application running");
         [[NSApplication sharedApplication] setDelegate: [[[AppDelegate alloc] init] autorelease]];
         [[NSApplication sharedApplication] run];

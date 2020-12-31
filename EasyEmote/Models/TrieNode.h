@@ -14,6 +14,8 @@
     NSMutableArray<NSMutableDictionary*>* _last_occurrences;
     TrieNode* _next_in_level;
     Record* _record;
+    NSInteger _currlevel;
+    NSInteger _last_same_ancestor_level;
 }
 
 +(instancetype)trienode:(NSString*)value parent:(TrieNode*)parent;
@@ -37,5 +39,11 @@
 -(NSMutableDictionary*)get_last_occurrences_at_level:(NSInteger)level;
 -(void)set_record:(Record*)r;
 -(Record*)get_record;
+-(void)clear_first_occurrences;
+-(void)clear_last_occurrences;
+-(NSInteger)get_curr_level;
+-(NSInteger)get_last_same_ancestor_level;
+-(void)set_curr_level:(NSInteger)level;
+-(void)set_last_same_ancestor_level:(NSInteger)level;
 
 @end

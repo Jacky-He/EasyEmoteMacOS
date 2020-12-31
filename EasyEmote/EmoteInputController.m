@@ -221,14 +221,14 @@
     _curr_candidates = new_can;
     [preferences sort_based_on_history:_curr_candidates];
     [_candidate_strings release];
-    _candidate_strings = [[NSMutableArray alloc]init];
-    for (NSInteger i = 0; i < [_curr_candidates count]; i++) \
+    _candidate_strings = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < [_curr_candidates count]; i++)
     {
         NSString* obj = [[NSString alloc] initWithFormat:@"%@ %@", [_curr_candidates[i] second], [_curr_candidates[i] first]];
         NSFont* font = [NSFont fontWithName:@"Chalkboard" size:15];
         NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
         [attributes setObject:font forKey:NSFontAttributeName];
-        NSAttributedString* temp = [[NSAttributedString alloc]initWithString:obj attributes:attributes];
+        NSAttributedString* temp = [[NSAttributedString alloc] initWithString:obj attributes:attributes];
         [_candidate_strings addObject:temp];
         [obj release];
         [temp release];

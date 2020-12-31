@@ -90,6 +90,20 @@
     return last[level];
 }
 
+-(void)clear_first_occurrences
+{
+    extern NSMutableDictionary* DUMMYDICT;
+    NSMutableArray<NSMutableDictionary*>* first = [self get_first_occurrences];
+    for (NSInteger i = 0; i < [first count]; i++) [first setObject:DUMMYDICT atIndexedSubscript:i];
+}
+
+-(void)clear_last_occurrences
+{
+    extern NSMutableDictionary* DUMMYDICT;
+    NSMutableArray<NSMutableDictionary*>* last = [self get_last_occurrences];
+    for (NSInteger i = 0; i < [last count]; i++) [last setObject:DUMMYDICT atIndexedSubscript:i];
+}
+
 -(void)set_numlevels:(NSInteger)levels
 {
     _numlevels = levels;
@@ -166,6 +180,26 @@
 -(void)set_parent:(TrieNode*)t
 {
     _parent = t;
+}
+
+-(NSInteger)get_curr_level
+{
+    return _currlevel;
+}
+
+-(NSInteger)get_last_same_ancestor_level
+{
+    return _last_same_ancestor_level;
+}
+
+-(void)set_curr_level:(NSInteger)level
+{
+    _currlevel = level;
+}
+
+-(void)set_last_same_ancestor_level:(NSInteger)level
+{
+    _last_same_ancestor_level = level;
 }
 
 -(void)dealloc

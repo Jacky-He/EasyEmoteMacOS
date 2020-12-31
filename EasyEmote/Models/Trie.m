@@ -123,7 +123,7 @@
             NSArray* chars = [cfirst_dict allKeys];
             for (NSString* c in chars)
             {
-                if (![c isEqualToString:[node get_value]])
+                if (![c isEqualToString:[neighbour get_value]])
                 {
                     NSMutableDictionary* first_dict = [node get_first_occurrences_at_level:i];
                     NSMutableDictionary* last_dict = [node get_last_occurrences_at_level:i];

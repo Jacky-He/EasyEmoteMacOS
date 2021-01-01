@@ -91,6 +91,7 @@ int main(int argc, const char * argv[])
             NSMutableArray<Triplet*>* allemotes = [dict subsequence_search:@""];
             [preferences load_all_tables:allemotes];
             [preferences load_all_emote_records];
+            [preferences set_need_train:YES];
             [preferences train_model];
         }
         

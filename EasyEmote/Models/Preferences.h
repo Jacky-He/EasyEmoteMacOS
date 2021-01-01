@@ -10,6 +10,9 @@
 {
     YCFFN* _prediction_model;
     FMDatabase* _db;
+    BOOL _training;
+    BOOL _need_train;
+    NSInteger _csv_length;
 }
 
 -(void)sort_based_on_history:(NSMutableArray<Triplet*>*)arr;
@@ -18,5 +21,6 @@
 -(Record*)get_record:(NSString*)emote output:(double)res;
 -(void)train_model;
 -(void)load_all_emote_records;
+-(void)set_need_train:(BOOL)train;
 
 @end

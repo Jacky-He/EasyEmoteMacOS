@@ -9,7 +9,6 @@
 
 -(void)set_prediction_model:(YCFFN*)model
 {
-    if (model == nil) return;
     [model retain];
     [_prediction_model release];
     _prediction_model = model;
@@ -18,12 +17,11 @@
 -(void)train_model
 {
     Matrix* m = [self get_csv_data];
-    if (m == nil || [m columns] < 20) // only train if has enough data
-    {
-        [self set_prediction_model:nil];
-        return;
-    }
+    if (m != nil) _csv_length = [m columns];
+    if (!_need_train || _training || m == nil || !([m columns] > 10 && [m columns] % 10 <= 7)) return; // only train if ok is not already training
     NSLog(@"DEBUGMESSAGE: Training Model...");
+    _training = YES;
+    _need_train = NO;
     @autoreleasepool {
         dispatch_async(dispatch_queue_create("Train Model", nil), ^{
             @autoreleasepool {
@@ -35,6 +33,7 @@
                     YCFFN* model = (YCFFN* )[trainer train:nil inputMatrix:input outputMatrix:output];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self set_prediction_model:model];
+                        _training = NO;
                         NSLog(@"DEBUGMESSAGE: Training Finished!");
                     });
                 }
@@ -63,7 +62,6 @@
 -(Matrix*)get_csv_data
 {
     NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
-//    NSString* defaultpath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"default.csv"];
     NSFileManager* filemanager = [NSFileManager defaultManager];
     if ([filemanager fileExistsAtPath:path]) return [self matrixWithCSVName:path];
     else return nil;
@@ -121,44 +119,43 @@
         [self sort_without_model:arr];
         return;
     }
-//    NSMutableArray<Pair*>* doublepair = [[NSMutableArray alloc]init];
-//    NSInteger cnt = [arr count];
-//    for (NSInteger i = 0; i < cnt; i++)
-//    {
-//        Record* r = [self get_record:arr[i] output:0];
-//        if (r == nil)
-//        {
-//            NSNumber* n = [NSNumber numberWithDouble:-1.0];
-//            Pair* obj = [[Pair alloc] initialize:arr[i] second:n];
-//            [doublepair addObject:obj];
-//            [obj release];
-//            [n release];
-//        }
-//        else
-//        {
-//            double* mat = malloc(sizeof(double)*4);
-//            mat[0] = [r total_select];
-//            mat[1] = [r mago_select];
-//            mat[2] = [r wago_select];
-//            mat[3] = [r ave_int];
-//            Matrix* input = [Matrix matrixFromArray:mat rows:4 columns:1];
-//            Matrix* output = [model activateWithMatrix:input];
-//            double pre = [output valueAtRow:0 column:0];
-//            NSNumber* n = [NSNumber numberWithDouble:pre];
-//            Pair* obj = [[Pair alloc]initialize:arr[i] second:n];
-//            [doublepair addObject:obj];
-//            free(mat);
-//            [obj release];
-//            [n release];
-//        }
-//    }
-//    [doublepair sortUsingComparator:^NSComparisonResult(id a, id b) {
-//        NSNumber* n1 = [(Pair*)a second];
-//        NSNumber* n2 = [(Pair*)b second];
-//        return [n2 compare:n1];
-//    }];
-//    for (NSInteger i = 0; i < [doublepair count]; i++) [arr setObject:[doublepair[i] first] atIndexedSubscript:i];
-//    [doublepair release];
+    NSMutableArray<Triplet*>* muggles = [[NSMutableArray alloc] init];
+    NSMutableArray<Pair*>* wizards = [[NSMutableArray alloc] init];
+    
+    for (NSInteger i = 0; i < [arr count]; i++)
+    {
+        Record* r = [arr[i] third];
+        if (r == nil || [r ave_int] < 0) [muggles addObject:arr[i]];
+        else
+        {
+            @autoreleasepool {
+                double* mat = malloc(sizeof(double)*4);
+                mat[0] = [r total_select];
+                mat[1] = [r mago_select];
+                mat[2] = [r wago_select];
+                mat[3] = [r ave_int];
+                Matrix* input = [Matrix matrixFromArray:mat rows:4 columns:1];
+                Matrix* output = [model activateWithMatrix:input];
+                double pre = [output valueAtRow:0 column:0];
+                NSNumber* n = [NSNumber numberWithDouble:pre];
+                Pair* obj = [Pair pair:arr[i] second:n];
+                [wizards addObject:obj];
+                free(mat);
+            }
+        }
+    }
+    
+    [self sort_without_model:muggles];
+    [wizards sortUsingComparator:^NSComparisonResult(id a, id b) {
+        NSNumber* n1 = [(Pair*)a second];
+        NSNumber* n2 = [(Pair*)b second];
+        return [n2 compare:n1];
+    }];
+    
+    for (NSInteger i = 0; i < [wizards count]; i++) [arr setObject:[wizards[i] first] atIndexedSubscript:i];
+    for (NSInteger i = [wizards count]; i < [wizards count] + [muggles count]; i++) [arr setObject:muggles[i-[wizards count]] atIndexedSubscript:i];
+    [muggles release];
+    [wizards release];
 }
 
 -(Record*)get_record:(NSString*)emote output:(double)res
@@ -189,6 +186,8 @@
     double ave_int = -1.0;
     NSString* sql = [NSString stringWithFormat: @"CREATE TABLE if not exists `%@` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `timestamp` INTEGER NOT NULL);", emote];
     if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE error = %@", [db lastErrorMessage]);
+    sql = [NSString stringWithFormat: @"DELETE FROM `%@` WHERE `timestamp`<%ld;", emote, mago];
+    if (![db executeStatements:sql]) NSLog(@"DEBUGMESSAGE error = %@", [db lastErrorMessage]);
     sql = [NSString stringWithFormat: @"SELECT COUNT(*) FROM `%@` WHERE `timestamp`>=%ld;", emote, wago];
     FMResultSet *s = [db executeQuery:sql];
     if ([s next]) wago_select = [s intForColumnIndex:0];
@@ -210,9 +209,8 @@
 
 -(void)append_to_CSV:(Record*)r
 {
-    NSLog(@"DEBUGMESSAGE: 23DSFA");
-    if ([r ave_int] < 0 || r == nil) return;
-    NSLog(@"DEBUGMESSAGE: 23DSFA");
+    if ([r ave_int] < 0 || r == nil || _csv_length > 10000) return;
+    _need_train = YES;
     @autoreleasepool {
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
         NSString* s = [NSString stringWithFormat:@"%d,%d,%d,%.3f,%.3f\n", [r total_select], [r mago_select], [r wago_select], [r ave_int], [r res]];
@@ -320,6 +318,11 @@
     Record* r = [self get_record:[entry first] output:-1.0];
     NSString* nocolon = [[entry first] substringWithRange:NSMakeRange(1, [[entry first] length]-2)];
     [dict update_record:nocolon record:r];
+}
+
+-(void)set_need_train:(BOOL)train
+{
+    _need_train = train;
 }
 
 -(void)dealloc

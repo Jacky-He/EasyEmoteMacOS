@@ -10,7 +10,7 @@
     if ([event type] == keyUp) return false;
     unsigned short keycode = [event keyCode];
     NSString* s = [event characters];
-    NSLog(@"DEBUGMESSAGE: %@, %d", s, keycode);
+//    NSLog(@"DEBUGMESSAGE: %@, %d", s, keycode);
     if ([s containsString:@":"])
     {
         _starting = !_starting;
@@ -50,7 +50,9 @@
     extern Preferences* preferences;
     CandidateWindow* candidates = [self get_candidate_window];
     [candidates setInputController:self];
-//    [preferences train_model];
+    @autoreleasepool {
+        [preferences train_model];
+    }
 }
 
 -(void)deactivateServer:(id)sender
@@ -63,7 +65,7 @@
 {
     NSString* text = [self composedBuffer];
     if (text == nil || [text length] == 0) text = [self originalBuffer];
-    NSLog(@"DEBUGMESSAGE: COMPOSEDBUFFER2: %@", [self composedBuffer]);
+//    NSLog(@"DEBUGMESSAGE: COMPOSEDBUFFER2: %@", [self composedBuffer]);
     [sender insertText:text replacementRange:NSMakeRange(NSNotFound, NSNotFound)];
     [self setComposedBuffer:@""];
     [self setOriginalBuffer:@""];
@@ -162,7 +164,7 @@
         NSLog(@"DEBUGMESSAGE: No Candidates?!");
         return;
     }
-    NSLog(@"DEBUGMESSAGE: updateCandidates?");
+//    NSLog(@"DEBUGMESSAGE: updateCandidates?");
     if (!_starting) [candidates hide];
     else
     {

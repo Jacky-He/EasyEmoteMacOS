@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>TISIntendedLanguage</key>
-	<string>en</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
@@ -29,15 +27,15 @@
 			<key>com.apple.inputmethod.emote</key>
 			<dict>
 				<key>tsInputModeAlternateMenuIconFileKey</key>
-				<string>apple.tiff</string>
+				<string>smile.tiff</string>
 				<key>tsInputModeDefaultStateKey</key>
 				<true/>
 				<key>tsInputModeIsVisibleKey</key>
 				<true/>
 				<key>tsInputModeMenuIconFileKey</key>
-				<string>apple.tiff</string>
+				<string>smile.tiff</string>
 				<key>tsInputModePaletteIconFileKey</key>
-				<string>apple.tiff</string>
+				<string>smile.tiff</string>
 				<key>tsInputModePrimaryInScriptKey</key>
 				<true/>
 				<key>tsInputModeScriptKey</key>
@@ -57,11 +55,13 @@
 	<string>YES</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>TISIntendedLanguage</key>
+	<string>en</string>
 	<key>tsInputMethodCharacterRepertoireKey</key>
 	<array>
 		<string>Latn</string>
 	</array>
 	<key>tsInputMethodIconFileKey</key>
-	<string>apple.tiff</string>
+	<string>smile.tiff</string>
 </dict>
 </plist>

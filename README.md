@@ -3,7 +3,7 @@ A very small-scale application that allows users to type emojis almost everywher
 
 Deployment Target: MacOS 10.15+
 
-Download Zip File: 
+Download Zip File: https://github.com/Jacky-He/EasyEmoteMacOS/releases/download/0.0/EasyEmoteMacOS.zip
 
 This is just a input method for fun. If you wish to try it out, download the zip file and double click install.command in the decompressed folder to install
 

@@ -46,7 +46,7 @@
     }
 }
 
-- (Matrix *)matrixWithCSVName:(NSString *)path
+-(Matrix*)matrixWithCSVName:(NSString *)path
 {
     NSString* fileContents = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     NSMutableArray *arrays = [fileContents.CSVComponents mutableCopy];
@@ -61,7 +61,9 @@
 
 -(Matrix*)get_csv_data
 {
-    NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString* docpath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"EasyEmote"];
+    NSString* path = [docpath stringByAppendingPathComponent:@"dataset.csv"];
     NSFileManager* filemanager = [NSFileManager defaultManager];
     if ([filemanager fileExistsAtPath:path]) return [self matrixWithCSVName:path];
     else return nil;
@@ -69,7 +71,13 @@
 
 -(FMDatabase*)get_db
 {
-    NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"shistory.db"];
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString* docpath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"EasyEmote"];
+    NSFileManager* filemanager = [NSFileManager defaultManager];
+    NSError* error = nil;
+    BOOL success = [filemanager createDirectoryAtPath:docpath withIntermediateDirectories:YES attributes:nil error: &error];
+    if (!success) NSLog(@"DEBUGMESSAGE: %@", [error localizedDescription]);
+    NSString* path = [docpath stringByAppendingPathComponent:@"shistory.db"];
     if (_db == nil) _db = [[FMDatabase databaseWithPath:path] retain];
     return _db;
 }
@@ -212,7 +220,9 @@
     if ([r ave_int] < 0 || r == nil || _csv_length > 10000) return;
     _need_train = YES;
     @autoreleasepool {
-        NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"dataset.csv"];
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString* docpath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"EasyEmote"];
+        NSString* path = [docpath stringByAppendingPathComponent:@"dataset.csv"];
         NSString* s = [NSString stringWithFormat:@"%d,%d,%d,%.3f,%.3f\n", [r total_select], [r mago_select], [r wago_select], [r ave_int], [r res]];
         NSFileManager* filemanager = [NSFileManager defaultManager];
         if ([filemanager fileExistsAtPath:path])
@@ -223,7 +233,13 @@
             [fh writeData:data];
             [fh closeFile];
         }
-        else [filemanager createFileAtPath:path contents:[s dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
+        else
+        {
+            NSError* error;
+            BOOL success = [filemanager createDirectoryAtPath:docpath withIntermediateDirectories:YES attributes:nil error:&error];
+            if (!success) NSLog(@"DEBUGMESSAGE: %@", [error localizedDescription]);
+            [filemanager createFileAtPath:path contents:[s dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
+        }
     }
 }
 

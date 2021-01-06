@@ -22,7 +22,7 @@ Note that you might need to go to System Preferences -> Security & Privacy to al
 
 ![add it](https://user-images.githubusercontent.com/39445499/103815065-cb09c700-5030-11eb-9a1e-5e5a28613bdc.png)
 
-3. Add the "Emoji 😃" Input Method under English.
+3. Add the "Emojis 😃" Input Method under English.
 
 ![start  using](https://user-images.githubusercontent.com/39445499/103815076-d2c96b80-5030-11eb-9a96-6e692b768b65.png)
 

@@ -34,4 +34,5 @@ Additional Library used: [YCML](https://github.com/yconst/YCML) and [FMDB](https
 
 # Known Issues:
 The emojis are currently not subject to customization. Only those representable by Unicode are available. 
+
 The availability is subject to the environment in which the application runs (some emojis will appear as question marks)

@@ -8,7 +8,11 @@ A very small-scale application that allows users to type emojis almost everywher
 ### Download File:
 Download and decompress the zip file from here: https://github.com/Jacky-He/EasyEmoteMacOS/releases/download/0.0/EasyEmoteMacOS.zip
 ### Install:
-Double click on install.command in the decompressed folder to install EasyEmote.app
+Double click on install.command in the decompressed folder to install EasyEmote.app.
+
+The password it asks for is your computer password.
+
+Note that you might need to go to System Preferences -> Security & Privacy to allow processes to run since this is a third party input method for MacOS mostly for fun and utility.
 ### Start Using the Input Method:
 1. Go to System Preferences -> Keyboard -> Input Sources.
 

@@ -1,4 +1,4 @@
-# EasyEmoteMacOS
+# EasyEmoteMacOS ![badge](https://img.shields.io/badge/cool-project-green)
 A very small-scale application that allows users to type emojis almost everywhere in a similar fashion as Discord and Slack. 
 
 ### Deployment Target: MacOS 10.15+

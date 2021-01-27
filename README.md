@@ -37,6 +37,7 @@ Emoji data are retrieved from: https://unicode.org/emoji/charts-13.0/full-emoji-
 Additional Library used: [YCML](https://github.com/yconst/YCML) and [FMDB](https://github.com/ccgus/fmdb)
 
 Subsequence Search Data Structure from:
+
 Jain R., Mohania M.K., Prabhakar S. (2013) Efficient Subsequence Search in Databases. In: Wang J., Xiong H., Ishikawa Y., Xu J., Zhou J. (eds) Web-Age Information Management. WAIM 2013. Lecture Notes in Computer Science, vol 7923. Springer, Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-38562-9_45
 
 # Known Issues:

@@ -31,6 +31,8 @@ Note that you might need to go to System Preferences -> Security & Privacy to al
 # Demo
 ![Demo](https://user-images.githubusercontent.com/39445499/103433088-f9168380-4bb8-11eb-990c-f9140c522ecb.gif)
 
+### Note that this is a subsequence search instead of a substring search. For example: "bt" is a subsequence of "bento" while "bt" is not a substring of "bento"
+
 # Credits
 Emoji data are retrieved from: https://unicode.org/emoji/charts-13.0/full-emoji-list.html
 
